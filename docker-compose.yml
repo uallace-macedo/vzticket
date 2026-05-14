@@ -1,0 +1,31 @@
+services:
+  livebit-db:
+    image: postgres:alpine
+    container_name: livebit-db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    networks:
+      - livebit-public-network
+      - livebit-private-network
+
+  livebit-cache:
+    image: redis:alpine
+    container_name: livebit-cache
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    ports:
+      - "${REDIS_PORT}:6379"
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+    networks:
+      - livebit-public-network
+      - livebit-private-network
+
+networks:
+  livebit-public-network:
+    driver: bridge
+  livebit-private-network:
+    driver: bridge
