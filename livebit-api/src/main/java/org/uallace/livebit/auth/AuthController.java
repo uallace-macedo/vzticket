@@ -7,6 +7,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.uallace.livebit.auth.dto.LoginInput;
 import org.uallace.livebit.auth.dto.RegisterInput;
 import org.uallace.livebit.user.UserEntity;
 import org.uallace.livebit.user.UserMapper;
@@ -32,6 +33,16 @@ public class AuthController {
         var user = authService.register(userEntity);
         return Response
                 .status(Response.Status.CREATED)
+                .entity(UserMapper.toDto(user))
+                .build();
+    }
+
+    @POST
+    @Path("/login")
+    public Response login(@Valid LoginInput input) {
+        var user = authService.login(input.email(), input.password());
+        return Response
+                .status(Response.Status.OK)
                 .entity(UserMapper.toDto(user))
                 .build();
     }

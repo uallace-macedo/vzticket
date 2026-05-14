@@ -37,4 +37,19 @@ public class AuthExceptionsMapper {
                 .entity(err)
                 .build();
     }
+
+    @ServerExceptionMapper
+    public Response handleInvalidCredentialsException(InvalidCredentialsException ex, UriInfo uriInfo) {
+        ErrorResponse<String> err = new ErrorResponse<>(
+                LocalDateTime.now(),
+                "Invalid credentials",
+                uriInfo.getPath(),
+                null
+        );
+
+        return Response
+                .status(Response.Status.UNAUTHORIZED.getStatusCode())
+                .entity(err)
+                .build();
+    }
 }
