@@ -19,5 +19,6 @@ Plataforma de leiloes em tempo real.
 
 ```bash
 cp .env.example .env
+./setup-keys.sh
 docker compose up
 ```
