@@ -20,7 +20,6 @@ import org.uallace.livebit.user.UserMapper;
 @Produces(MediaType.APPLICATION_JSON)
 public class AuthController {
 
-
     private final AuthService authService;
     private final TokenService tokenService;
 
@@ -40,10 +39,9 @@ public class AuthController {
         userEntity.role = input.role();
 
         var user = authService.register(userEntity);
-        return Response
-                .status(Response.Status.CREATED)
-                .entity(UserMapper.toDto(user))
-                .build();
+        return Response.status(Response.Status.CREATED)
+            .entity(UserMapper.toDto(user))
+            .build();
     }
 
     @POST
@@ -51,12 +49,14 @@ public class AuthController {
     @PermitAll
     public Response login(@Valid LoginInput input) {
         var user = authService.login(input.email(), input.password());
-        NewCookie cookie = tokenService.generateCookie(user.email, user.role.name());
+        NewCookie cookie = tokenService.generateCookie(
+            user.email,
+            user.role.name()
+        );
 
-        return Response
-                .status(Response.Status.OK)
-                .cookie(cookie)
-                .entity(UserMapper.toDto(user))
-                .build();
+        return Response.status(Response.Status.OK)
+            .cookie(cookie)
+            .entity(UserMapper.toDto(user))
+            .build();
     }
 }

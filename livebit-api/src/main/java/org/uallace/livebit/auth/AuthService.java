@@ -3,14 +3,14 @@ package org.uallace.livebit.auth;
 import io.quarkus.elytron.security.common.BcryptUtil;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
+import java.util.Optional;
 import org.uallace.livebit.auth.exceptions.InvalidCredentialsException;
 import org.uallace.livebit.auth.exceptions.UserEmailAlreadyExistsException;
 import org.uallace.livebit.user.UserEntity;
 
-import java.util.Optional;
-
 @ApplicationScoped
 public class AuthService {
+
     private Optional<UserEntity> findUserByEmail(String email) {
         return UserEntity.find("email", email).firstResultOptional();
     }

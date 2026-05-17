@@ -8,6 +8,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 @ApplicationScoped
 public class TokenService {
+
     @Inject
     @ConfigProperty(name = "smallrye.jwt.verify.issuer")
     String issuer;
@@ -24,16 +25,16 @@ public class TokenService {
         int MAX_AGE = 3600 * 5;
 
         String token = Jwt.issuer(issuer)
-                .upn(email)
-                .groups(role)
-                .expiresIn(MAX_AGE)
-                .sign();
+            .upn(email)
+            .groups(role)
+            .expiresIn(MAX_AGE)
+            .sign();
 
         return new NewCookie.Builder(cookieName)
-                .value(token)
-                .path("/")
-                .secure(clientUrl.startsWith("https"))
-                .maxAge(MAX_AGE)
-                .build();
+            .value(token)
+            .path("/")
+            .secure(clientUrl.startsWith("https"))
+            .maxAge(MAX_AGE)
+            .build();
     }
 }
