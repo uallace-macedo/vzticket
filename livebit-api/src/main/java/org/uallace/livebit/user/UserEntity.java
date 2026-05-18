@@ -2,7 +2,11 @@ package org.uallace.livebit.user;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
+import org.uallace.livebit.auction.AuctionEntity;
+
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -28,6 +32,12 @@ public class UserEntity extends PanacheEntityBase {
 
     @Column(name = "created_at", nullable = false, updatable = false)
     public LocalDateTime createdAt;
+
+    @OneToMany(mappedBy = "owner")
+    public List<AuctionEntity> auctions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "winner")
+    public List<AuctionEntity> wonAuctions = new ArrayList<>();
 
     @PrePersist
     public void prePersist() {
