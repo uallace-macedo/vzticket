@@ -2,6 +2,8 @@ package com.uallace.livebit.auction;
 
 import com.uallace.livebit.user.UserEntity;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -9,6 +11,8 @@ import java.util.UUID;
 
 @Table(name = "auctions")
 @Entity
+@Getter
+@Setter
 public class AuctionEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -22,11 +26,11 @@ public class AuctionEntity {
     private BigDecimal startingPrice;
 
     @Column(name = "current_price", nullable = false)
-    private BigDecimal currentPrince;
+    private BigDecimal currentPrice = new BigDecimal(0);
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private AuctionStatus status;
+    private AuctionStatus status = AuctionStatus.SCHEDULED;
 
     @Column(name = "starts_at", nullable = false)
     private OffsetDateTime startsAt;

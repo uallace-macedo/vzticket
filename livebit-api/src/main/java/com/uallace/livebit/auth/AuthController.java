@@ -1,9 +1,6 @@
 package com.uallace.livebit.auth;
 
-import com.uallace.livebit.auth.dto.LoginInput;
-import com.uallace.livebit.auth.dto.LoginOutput;
-import com.uallace.livebit.auth.dto.RegisterInput;
-import com.uallace.livebit.auth.dto.RegisterOutput;
+import com.uallace.livebit.auth.dto.*;
 import com.uallace.livebit.infra.security.TokenService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -30,7 +27,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginOutput> login(@RequestBody @Valid LoginInput input, HttpServletResponse response) {
+    public ResponseEntity<UserOutput> login(@RequestBody @Valid LoginInput input, HttpServletResponse response) {
         LoginOutput user = authService.login(input);
 
         Cookie cookie = new Cookie(tokenService.getCookieName(), user.token());
@@ -39,8 +36,11 @@ public class AuthController {
         cookie.setPath("/");
         cookie.setMaxAge(tokenService.getExpiresIn());
 
-        response.addCookie(cookie);
-        return ResponseEntity.ok().body(user);
+        return ResponseEntity.ok().body(new UserOutput(
+                user.username(),
+                user.email(),
+                user.role()
+        ));
     }
 
     @PostMapping("/logout")

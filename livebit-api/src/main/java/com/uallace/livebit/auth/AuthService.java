@@ -4,7 +4,6 @@ import com.uallace.livebit.auth.dto.LoginInput;
 import com.uallace.livebit.auth.dto.LoginOutput;
 import com.uallace.livebit.auth.dto.RegisterInput;
 import com.uallace.livebit.auth.dto.RegisterOutput;
-import com.uallace.livebit.auth.exceptions.InvalidCredentialsException;
 import com.uallace.livebit.infra.security.TokenService;
 import com.uallace.livebit.user.UserEntity;
 import com.uallace.livebit.user.UserRepository;
