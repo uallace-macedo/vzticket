@@ -1,17 +1,21 @@
-# Livebit
+# Livebit 🔨
 
-Plataforma de leiloes em tempo real.
+> Em desenvolvimento
+
+Plataforma de leilões em tempo real construída com Java, Go, Kafka, Angular e WebSocket + autenticação OAuth2/JWT, processamento concorrente de lances e gerenciamento automatizado do ciclo de vida dos leilões.
 
 ---
 
-## Servicos
+## Serviços
 
-1. **`livebit-api:`** quarkus (api principal; autenticacao; leiloes e websocket)
-2. **`livebit-bidder:`** golang (recebe lances, valida e publica no kafka)
-3. **`livebit-web:`** interface
-4. **`kafka`**
-5. **`postgresql`**
-6. **`redis`**
+| Serviço | Tech | Responsabilidade |
+|---|---|---|
+| `livebit-api` | Spring Boot | API principal, autenticação OAuth2/JWT, leilões, WebSocket |
+| `livebit-bidder` | Golang | Recebe lances, valida e publica no Kafka |
+| `livebit-web` | Angular | Interface em tempo real |
+| Kafka | - | Comunicação assíncrona entre serviços |
+| PostgreSQL | - | Persistência |
+| Redis | - | Cache do lance mais alto por leilão |
 
 ---
 
@@ -22,3 +26,11 @@ cp .env.example .env
 ./setup-keys.sh
 docker compose up
 ```
+
+---
+
+## Segurança
+
+- Autenticação via OAuth2 com chaves RSA (.pem)
+- JWT com Spring Security
+- CORS configurado por ambiente
