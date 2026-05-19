@@ -21,4 +21,15 @@ public class UserExceptionsHandler {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ExceptionResponse<Void>> handleUserNotFoundException(UserNotFoundException ex, HttpServletRequest req) {
+        ExceptionResponse<Void> error = new ExceptionResponse<>(
+                LocalDateTime.now(),
+                ex.getMessage(),
+                req.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
 }
