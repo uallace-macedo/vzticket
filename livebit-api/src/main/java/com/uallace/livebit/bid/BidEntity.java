@@ -15,14 +15,12 @@ public class BidEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false)
     @ManyToOne
-    @JoinColumn(name = "auction_id")
+    @JoinColumn(name = "auction_id", nullable = false)
     private AuctionEntity auction;
 
-    @Column(nullable = false)
     @ManyToOne
-    @JoinColumn(name = "bidder_id")
+    @JoinColumn(name = "bidder_id", nullable = false)
     private UserEntity bidder;
 
     @Column(nullable = false)

@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS bids (
-    id UUID PRIMARY KEY gen_random_uuid(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     auction_id UUID NOT NULL,
     bidder_id UUID NOT NULL,
     amount NUMERIC(14, 2) NOT NULL,
