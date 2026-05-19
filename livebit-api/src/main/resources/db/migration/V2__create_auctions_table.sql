@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS auctions (
-    id UUID PRIMARY KEY,
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     title VARCHAR(100) NOT NULL,
     description TEXT,
     starting_price NUMERIC(14, 2) NOT NULL DEFAULT 0,
