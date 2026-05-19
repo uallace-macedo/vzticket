@@ -1,5 +1,6 @@
 package com.uallace.livebit.auction;
 
+import com.uallace.livebit.auction.dto.AuctionOutput;
 import com.uallace.livebit.auction.dto.CreateInput;
 import com.uallace.livebit.auction.dto.CreateOutput;
 import com.uallace.livebit.auction.exceptions.InvalidEndsAtException;
@@ -8,6 +9,7 @@ import com.uallace.livebit.user.UserRepository;
 import com.uallace.livebit.user.exceptions.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -43,5 +45,12 @@ public class AuctionService {
                 created.getEndsAt(),
                 ownerID
         );
+    }
+
+    public Slice<AuctionOutput> getActiveAuctions(int page, int size) {
+        OffsetDateTime now = OffsetDateTime.now();
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by("endsAt").ascending());
+        Slice<AuctionEntity> entities = auctionRepository.findByEndsAtAfter(now, pageRequest);
+        return entities.map(AuctionMapper::fromEntity);
     }
 }
