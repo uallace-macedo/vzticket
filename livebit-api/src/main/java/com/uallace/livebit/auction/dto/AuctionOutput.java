@@ -13,6 +13,7 @@ public record AuctionOutput(
         String title,
         String description,
         BigDecimal startingPrice,
+        BigDecimal currentPrice,
         OffsetDateTime startsAt,
         OffsetDateTime endsAt,
         MinimalUser owner,

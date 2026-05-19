@@ -28,6 +28,7 @@ public class AuctionMapper {
                 entity.getTitle(),
                 entity.getDescription(),
                 entity.getStartingPrice(),
+                entity.getCurrentPrice(),
                 entity.getStartsAt(),
                 entity.getEndsAt(),
                 ownerOutput,
