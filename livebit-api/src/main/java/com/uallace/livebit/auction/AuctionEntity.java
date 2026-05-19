@@ -1,5 +1,6 @@
 package com.uallace.livebit.auction;
 
+import com.uallace.livebit.bid.BidEntity;
 import com.uallace.livebit.user.UserEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -7,6 +8,8 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Table(name = "auctions")
@@ -45,4 +48,7 @@ public class AuctionEntity {
     @ManyToOne
     @JoinColumn(name = "winner_id")
     private UserEntity winner;
+
+    @OneToMany(mappedBy = "auction")
+    List<BidEntity> bids = new ArrayList<>();
 }

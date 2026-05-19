@@ -1,6 +1,7 @@
 package com.uallace.livebit.user;
 
 import com.uallace.livebit.auction.AuctionEntity;
+import com.uallace.livebit.bid.BidEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -38,16 +39,19 @@ public class UserEntity implements UserDetails {
 
     @Column(name = "created_at", nullable = false, updatable = false)
     @org.hibernate.annotations.CreationTimestamp
-    public LocalDateTime createdAt;
+    private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "owner")
-    List<AuctionEntity> auctions = new ArrayList<>();
+    private List<AuctionEntity> auctions = new ArrayList<>();
 
     @OneToMany(mappedBy = "winner")
-    List<AuctionEntity> wonAuctions = new ArrayList<>();
+    private List<AuctionEntity> wonAuctions = new ArrayList<>();
 
     @Column(nullable = false)
     private boolean active = true;
+
+    @OneToMany(mappedBy = "bidder")
+    private List<BidEntity> bids = new ArrayList<>();
 
     @Override
     public String getUsername() {
