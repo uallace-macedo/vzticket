@@ -2,9 +2,11 @@
 
 openssl genrsa -out rsaPrivateKey.pem 2048
 openssl pkcs8 -topk8 -inform PEM -outform PEM -in rsaPrivateKey.pem -out privateKey.pem -nocrypt
-
 openssl rsa -in rsaPrivateKey.pem -pubout -outform PEM -out publicKey.pem
-mv publicKey.pem src/main/resources/
+
+mkdir -p src/main/resources/certs
+mv publicKey.pem src/main/resources/certs/
+mv privateKey.pem src/main/resources/certs/
 rm rsaPrivateKey.pem
 
 echo "---------------------------------------------"
