@@ -21,4 +21,15 @@ public class AuctionExceptionsHandler {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
+
+    @ExceptionHandler(AuctionNotFoundException.class)
+    public ResponseEntity<ExceptionResponse<Void>> handleAuctionNotFoundException(AuctionNotFoundException ex, HttpServletRequest req) {
+        ExceptionResponse<Void> error = new ExceptionResponse<>(
+                LocalDateTime.now(),
+                ex.getMessage(),
+                req.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
 }

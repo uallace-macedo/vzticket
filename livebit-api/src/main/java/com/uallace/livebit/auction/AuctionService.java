@@ -24,7 +24,8 @@ public class AuctionService {
 
     public CreateOutput create(CreateInput input, UUID ownerID) {
         if(input.endsAt().isBefore(input.startsAt())) throw new InvalidEndsAtException(input.startsAt());
-        UserEntity user = userRepository.findById(ownerID).orElseThrow(() -> new UserNotFoundException(ownerID));
+        UserEntity user = userRepository.findById(ownerID)
+                .orElseThrow(() -> new UserNotFoundException("User with id: " + ownerID.toString() + " not found"));
 
         AuctionEntity auction = new AuctionEntity();
         auction.setTitle(input.title());
