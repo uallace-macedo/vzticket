@@ -3,6 +3,10 @@ package com.uallace.livebit.bid;
 import com.uallace.livebit.auction.AuctionEntity;
 import com.uallace.livebit.user.UserEntity;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -10,6 +14,10 @@ import java.util.UUID;
 
 @Table(name = "bids")
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 public class BidEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -28,4 +36,9 @@ public class BidEntity {
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private OffsetDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = OffsetDateTime.now();
+    }
 }
