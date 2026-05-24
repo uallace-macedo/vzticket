@@ -37,7 +37,7 @@ func (s *server) Start() {
 		MaxAge:           12 * time.Hour,
 	}))
 
-	s.setupMiddlewares(server)
+	// s.setupMiddlewares(server)
 	s.container.registerRoutes(server)
 	server.Run(":" + s.config.ApplicationConfig.API.Port)
 }
