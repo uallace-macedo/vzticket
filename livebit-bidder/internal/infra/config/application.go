@@ -2,7 +2,8 @@ package config
 
 type (
 	API struct {
-		Port string
+		Port          string
+		JwtCookieName string
 	}
 
 	Client struct {
@@ -18,7 +19,8 @@ type (
 func GetApplicationConfig() *ApplicationConfig {
 	return &ApplicationConfig{
 		API: &API{
-			Port: getEnv("GOLANG_API_PORT", "5001"),
+			Port:          getEnv("GOLANG_API_PORT", "5001"),
+			JwtCookieName: getEnv("JWT_COOKIE_NAME", "accessToken"),
 		},
 
 		Client: &Client{
