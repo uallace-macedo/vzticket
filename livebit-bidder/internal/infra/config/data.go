@@ -2,7 +2,8 @@ package config
 
 type (
 	Redis struct {
-		Url      string
+		Host     string
+		Port     int
 		Password string
 	}
 
@@ -14,7 +15,8 @@ type (
 func GetDataConfig() *DataConfig {
 	return &DataConfig{
 		Redis: &Redis{
-			Url:      getEnv("REDIS_HOST", ""),
+			Host:     getEnv("REDIS_HOST", "localhost"),
+			Port:     getIntEnv("REDIS_PORT", 0),
 			Password: getEnv("REDIS_PASSWORD", ""),
 		},
 	}
