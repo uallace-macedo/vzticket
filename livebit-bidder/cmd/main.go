@@ -10,7 +10,7 @@ import (
 func main() {
 	config := config.New()
 	logger := logger.New("")
-	redis := database.ConnectRedis(config.DataConfig.Redis.Url, config.DataConfig.Redis.Password, logger)
+	redis := database.ConnectRedis(config.DataConfig.Redis, logger)
 
 	server.New(config, logger, redis).Start()
 }

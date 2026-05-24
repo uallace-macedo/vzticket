@@ -2,10 +2,11 @@ package database
 
 import (
 	"context"
-	"strings"
+	"strconv"
 	"time"
 
 	"github.com/redis/go-redis/v9"
+	"github.com/uallace-macedo/livebit/livebit-bidder/internal/infra/config"
 	"github.com/uallace-macedo/livebit/livebit-bidder/internal/infra/logger"
 )
 
@@ -13,13 +14,13 @@ type silentLogger struct{}
 
 func (s silentLogger) Printf(ctx context.Context, format string, v ...any) {}
 
-func ConnectRedis(addrString, rdbPass string, log *logger.Logger) *redis.Client {
-	addr := strings.TrimPrefix(addrString, "redis://")
+func ConnectRedis(redisConfig *config.Redis, log *logger.Logger) *redis.Client {
+	addr := redisConfig.Host + ":" + strconv.Itoa(redisConfig.Port)
 	redis.SetLogger(silentLogger{})
 
 	opts := &redis.Options{
 		Addr:        addr,
-		Password:    rdbPass,
+		Password:    redisConfig.Password,
 		PoolSize:    10,
 		ReadTimeout: 5 * time.Second,
 		MaxRetries:  -1,
