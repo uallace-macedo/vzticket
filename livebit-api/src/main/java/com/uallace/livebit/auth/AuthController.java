@@ -36,6 +36,7 @@ public class AuthController {
         cookie.setPath("/");
         cookie.setMaxAge(tokenService.getExpiresIn());
 
+        response.addCookie(cookie);
         return ResponseEntity.ok().body(new UserOutput(
                 user.username(),
                 user.email(),
