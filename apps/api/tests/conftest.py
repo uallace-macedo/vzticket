@@ -5,7 +5,7 @@ from sqlalchemy.pool import StaticPool
 from verzel.core.database import table_registry
 
 engine = create_async_engine(
-    'sqlite:aiosqlite:///:memory:',
+    'sqlite+aiosqlite:///:memory:',
     connect_args={'check_same_thread': False},
     poolclass=StaticPool
 )
