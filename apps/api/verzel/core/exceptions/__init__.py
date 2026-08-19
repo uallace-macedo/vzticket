@@ -8,7 +8,6 @@ from verzel.core.exceptions.base import AppError
 
 
 def register_exception_handlers(app: FastAPI):
-
     @app.exception_handler(AppError)
     async def app_error_handler(req: Request, exc: AppError) -> JSONResponse:
         return JSONResponse(
