@@ -19,9 +19,21 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = ''
     JWT_TOKEN_EXP_MINUTES: int = 40
 
+    AUTH_COOKIE_NAME: str = ''
+
+    WEB_URL: str = ''
+
     @property
-    def database_url(self) -> str:
+    def DATABASE_URL(self) -> str:
         return f'postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}'
+
+    @property
+    def AUTH_COOKIE_MAX_AGE(self) -> int:
+        return self.JWT_TOKEN_EXP_MINUTES * 60
+
+    @property
+    def IS_SECURE_COOKIE(self) -> bool:
+        return self.WEB_URL.startswith('https://')
 
 
 settings = Settings()
