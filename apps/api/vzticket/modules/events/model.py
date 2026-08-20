@@ -6,11 +6,11 @@ from typing import TYPE_CHECKING, List
 from sqlalchemy import DateTime, ForeignKey, Numeric, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from verzel.core.database import table_registry
+from vzticket.core.database import table_registry
 
 if TYPE_CHECKING:
-    from verzel.modules.tickets.model import Ticket
-    from verzel.modules.users.model import User
+    from vzticket.modules.tickets.model import Ticket
+    from vzticket.modules.users.model import User
 
 
 @table_registry.mapped_as_dataclass

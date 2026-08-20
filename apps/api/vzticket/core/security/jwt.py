@@ -3,9 +3,9 @@ from zoneinfo import ZoneInfo
 
 from jwt import ExpiredSignatureError, PyJWTError, decode, encode
 
-from verzel.core.security.exceptions import ExpiredTokenError, InvalidTokenError
-from verzel.core.security.types import TokenPayload
-from verzel.core.settings import settings
+from vzticket.core.security.exceptions import ExpiredTokenError, InvalidTokenError
+from vzticket.core.security.types import TokenPayload
+from vzticket.core.settings import settings
 
 
 def create_access_token(data: TokenPayload) -> str:

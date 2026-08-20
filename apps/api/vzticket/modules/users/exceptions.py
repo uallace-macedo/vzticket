@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from verzel.core.exceptions.base import AppError
+from vzticket.core.exceptions.base import AppError
 
 
 class UserNotFoundError(AppError):

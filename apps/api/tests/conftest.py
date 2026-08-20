@@ -3,13 +3,13 @@ from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.pool import StaticPool
 
-from verzel.core.database import get_session, table_registry
-from verzel.core.security.jwt import create_access_token
-from verzel.core.security.password import generate_hash
-from verzel.core.security.types import TokenPayload
-from verzel.core.settings import settings
-from verzel.main import app
-from verzel.modules.users.model import User, UserRole
+from vzticket.core.database import get_session, table_registry
+from vzticket.core.security.jwt import create_access_token
+from vzticket.core.security.password import generate_hash
+from vzticket.core.security.types import TokenPayload
+from vzticket.core.settings import settings
+from vzticket.main import app
+from vzticket.modules.users.model import User, UserRole
 
 engine = create_async_engine(
     'sqlite+aiosqlite:///:memory:',

@@ -1,4 +1,4 @@
-from verzel.core.security.password import generate_hash, verify_password
+from vzticket.core.security.password import generate_hash, verify_password
 
 
 def test_generate_hash_success():

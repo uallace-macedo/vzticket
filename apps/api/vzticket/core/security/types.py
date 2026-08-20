@@ -3,7 +3,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
-from verzel.modules.users.model import UserRole
+from vzticket.modules.users.model import UserRole
 
 
 class TokenPayload(BaseModel):

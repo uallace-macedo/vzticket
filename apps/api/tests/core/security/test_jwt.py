@@ -3,9 +3,9 @@ from datetime import datetime, timedelta, timezone
 import pytest
 from jwt import encode
 
-from verzel.core.security.exceptions import InvalidTokenError
-from verzel.core.security.jwt import create_access_token, decode_access_token
-from verzel.core.settings import settings
+from vzticket.core.security.exceptions import InvalidTokenError, ExpiredTokenError
+from vzticket.core.security.jwt import create_access_token, decode_access_token
+from vzticket.core.settings import settings
 
 
 def test_create_and_decode_token_success(valid_payload):
@@ -28,7 +28,7 @@ def test_decode_token_expired_raises_error(valid_payload):
         algorithm=settings.JWT_ALGORITHM,
     )
 
-    with pytest.raises(InvalidTokenError, match='Token expirado'):
+    with pytest.raises(ExpiredTokenError, match='Token expirado'):
         decode_access_token(expired_token)
 
 

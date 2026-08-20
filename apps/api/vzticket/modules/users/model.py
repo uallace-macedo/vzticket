@@ -7,11 +7,11 @@ from sqlalchemy import DateTime, String
 from sqlalchemy import Enum as SQLEnum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from verzel.core.database import table_registry
+from vzticket.core.database import table_registry
 
 if TYPE_CHECKING:
-    from verzel.modules.events.model import Event
-    from verzel.modules.tickets.model import Ticket
+    from vzticket.modules.events.model import Event
+    from vzticket.modules.tickets.model import Ticket
 
 
 class UserRole(str, Enum):

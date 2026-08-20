@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from verzel.modules.users.model import UserRole
+from vzticket.modules.users.model import UserRole
 
 V1_BASE_URL = '/api/v1/auth'
 

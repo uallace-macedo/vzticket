@@ -1,7 +1,7 @@
 services:
-  verzel_db:
+  vzticket:
     image: postgres:16-alpine
-    container_name: verzel_db
+    container_name: vzticket
     env_file:
       - .env
     environment:

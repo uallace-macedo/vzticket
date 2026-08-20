@@ -3,13 +3,13 @@ from typing import Annotated
 from fastapi import Depends, Request
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
-from verzel.core.database import SessionDep
-from verzel.core.security.jwt import decode_access_token
-from verzel.core.settings import settings
-from verzel.modules.auth.exceptions import MissingTokenError
-from verzel.modules.auth.service import AuthService
-from verzel.modules.users.model import User
-from verzel.modules.users.service import UserService
+from vzticket.core.database import SessionDep
+from vzticket.core.security.jwt import decode_access_token
+from vzticket.core.settings import settings
+from vzticket.modules.auth.exceptions import MissingTokenError
+from vzticket.modules.auth.service import AuthService
+from vzticket.modules.users.model import User
+from vzticket.modules.users.service import UserService
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='/api/v1/auth/login', auto_error=False)
 
