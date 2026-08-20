@@ -54,15 +54,15 @@ erDiagram
   EVENTS {
     uuid id PK
     uuid organizer_id FK
-    string external_api_id
     string title
     string description
-    string banner_url
-    int total_capacity
     int available_tickets
     decimal ticket_price
-    datetime event_date
     string location
+    string location_url
+    datetime event_date
+    string poster_url
+    string banner_url
   }
 
   TICKETS {
