@@ -32,7 +32,8 @@ async def get_token_from_cookie(
 
 async def get_current_user(
     session: SessionDep,
-    token: Annotated[str, Depends(get_token_from_cookie)]
+    token: Annotated[str, Depends(get_token_from_cookie)],
+    _: Annotated[str | None, Depends(oauth2_scheme)] = None
 ) -> User:
     """Decodes the token and returns logged user"""
     payload = decode_access_token(token)
