@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: var(--app-primary);
+  --color-background: var(--app-bg);
+  --color-background-muted: var(--app-bg-muted);
+  --color-foreground: var(--app-fg);
+  --color-foreground-muted: var(--app-fg-muted);
+  --color-primary-foreground: var(--app-primary-fg);
+}
+
+:root {
+  --app-bg: #FAFAFA;
+  
+  --app-fg: #202020;
+  --app-fg-muted: #595959;
+  
+  --app-bg-muted: #F3F3EF;
+  
+  --app-primary: #0634CA;
+  --app-primary-fg: #FFFFFF;
+}
+
+body {
+  background-color: var(--app-bg);
+  color: var(--app-fg);
+}
