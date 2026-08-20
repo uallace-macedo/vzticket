@@ -5,7 +5,7 @@ from pydantic import BaseModel, ConfigDict, Field, AliasChoices, computed_field
 from vzticket.core.settings import settings
 
 
-class MovieSearchResult(BaseModel):
+class TMDBSearchResult(BaseModel):
     id: int
 
     title: str = Field(
@@ -38,8 +38,13 @@ class MovieSearchResult(BaseModel):
         return url if self.backdrop_path else None
 
 
-class MovieSearchResponse(BaseModel):
+class TMDBSearchResponse(BaseModel):
     page: int
     total_pages: int
     total_results: int
-    results: list[MovieSearchResult]
+    results: list[TMDBSearchResult]
+
+
+class TMDBSearchOptions(BaseModel):
+    title: str
+    page: Optional[int] = None

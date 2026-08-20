@@ -1,7 +1,7 @@
 import httpx
 
 from vzticket.core.libs.tmdb.exceptions import TMDBApiError, TMDBConnectionError
-from vzticket.core.libs.tmdb.schemas import MovieSearchResponse
+from vzticket.core.libs.tmdb.schemas import TMDBSearchResponse
 from vzticket.core.settings import settings
 
 
@@ -10,7 +10,7 @@ class TMDBClient:
         self.base_url = settings.TMDB_BASE_URL
         self.api_key = settings.TMDB_API_KEY
 
-    async def search(self, title: str, page: int = 1) -> MovieSearchResponse:
+    async def search(self, title: str, page: int = 1) -> TMDBSearchResponse:
         """Search for movies, tv shows and people"""
         url = f'{self.base_url}/search/multi'
         params = {
@@ -33,7 +33,7 @@ class TMDBClient:
                         if item.get('media_type') != 'person'
                     ]
 
-                return MovieSearchResponse(**data)
+                return TMDBSearchResponse(**data)
             except httpx.HTTPStatusError as exc:
                 raise TMDBApiError(
                     status_code=exc.response.status_code

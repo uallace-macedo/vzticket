@@ -1,8 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from vzticket.core.libs.tmdb.client import TMDBClient
-from vzticket.core.libs.tmdb.schemas import MovieSearchResponse
-from vzticket.modules.events.schemas import SearchTMDB
+from vzticket.core.libs.tmdb.schemas import TMDBSearchResponse, TMDBSearchOptions
 
 
 class EventService:
@@ -10,9 +9,9 @@ class EventService:
         self.tmdb_client = TMDBClient()
         self.session = session
 
-    async def search_tmdb(self, title: str, page: int) -> MovieSearchResponse:
+    async def search_tmdb(self, options: TMDBSearchOptions) -> TMDBSearchResponse:
         """Uses TMDB Lib to search movies, tv shows and people"""
         return await self.tmdb_client.search(
-            title,
-            page
+            options.title,
+            options.page
         )

@@ -1,17 +1,17 @@
 from unittest.mock import AsyncMock
 
-from vzticket.core.libs.tmdb.schemas import MovieSearchResponse, MovieSearchResult
-from vzticket.modules.events.schemas import SearchTMDB
+from vzticket.core.libs.tmdb.schemas import TMDBSearchResponse, TMDBSearchResult
+from vzticket.modules.events.schemas import TMDBSearchOptions
 from vzticket.modules.events.service import EventService
 
 
 async def test_event_service_search_tmdb_success(session, monkeypatch):
-    mock_tmdb_response = MovieSearchResponse(
+    mock_tmdb_response = TMDBSearchResponse(
         page=1,
         total_pages=1,
         total_results=1,
         results=[
-            MovieSearchResult(
+            TMDBSearchResult(
                 id=1,
                 title='Matrix',
                 original_title='The Matrix',
@@ -31,7 +31,7 @@ async def test_event_service_search_tmdb_success(session, monkeypatch):
     )
 
     event_service = EventService(session)
-    search_dto = SearchTMDB(title='Matrix', page=1)
+    search_dto = TMDBSearchOptions(title='Matrix', page=1)
 
     response = await event_service.search_tmdb(search_dto)
 

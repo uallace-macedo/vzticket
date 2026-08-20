@@ -6,7 +6,7 @@ import pytest
 
 from vzticket.core.libs.tmdb.client import TMDBClient
 from vzticket.core.libs.tmdb.exceptions import TMDBApiError, TMDBConnectionError
-from vzticket.core.libs.tmdb.schemas import MovieSearchResponse
+from vzticket.core.libs.tmdb.schemas import TMDBSearchResponse
 
 
 async def test_tmdb_client_search_success(monkeypatch):
@@ -40,7 +40,7 @@ async def test_tmdb_client_search_success(monkeypatch):
     client = TMDBClient()
     response = await client.search('Matrix')
 
-    assert isinstance(response, MovieSearchResponse)
+    assert isinstance(response, TMDBSearchResponse)
     assert response.page == 1
     assert response.results[0].title == 'Matrix'
 

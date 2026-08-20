@@ -4,10 +4,10 @@ from fastapi import APIRouter
 
 from vzticket.core.exceptions.swagger import create_error_response
 from vzticket.core.libs.tmdb.exceptions import TMDBApiError, TMDBConnectionError
-from vzticket.core.libs.tmdb.schemas import MovieSearchResponse
+from vzticket.core.libs.tmdb.schemas import TMDBSearchResponse
 from vzticket.modules.auth.dependencies import CurrentUserDep
 from vzticket.modules.events.dependencies import EventServiceDep
-from vzticket.modules.events.schemas import SearchTMDB
+from vzticket.modules.events.dependencies import SearchTMDBOptions
 
 router = APIRouter(prefix='/events', tags=['Events'])
 
@@ -15,7 +15,7 @@ router = APIRouter(prefix='/events', tags=['Events'])
 @router.get(
     '',
     status_code=HTTPStatus.OK,
-    response_model=MovieSearchResponse,
+    response_model=TMDBSearchResponse,
     responses={
         **create_error_response(
             TMDBApiError,
@@ -29,9 +29,8 @@ router = APIRouter(prefix='/events', tags=['Events'])
 )
 async def search_tmdb(
     event_service: EventServiceDep,
-    _: CurrentUserDep,
-    title: str,
-    page: int = 1
+    options: SearchTMDBOptions,
+    _: CurrentUserDep
 ):
     """Utiliza a lib configurada do TMDB para fazer a busca com base nas options"""
-    return await event_service.search_tmdb(title, page)
+    return await event_service.search_tmdb(options)
