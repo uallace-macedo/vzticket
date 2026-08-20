@@ -43,7 +43,7 @@ class Event:
         nullable=False
     )
 
-    location_url: Mapped[str] = mapped_column(nullable=True)
+    location_url: Mapped[str | None] = mapped_column(default=None, nullable=True)
 
     poster_url: Mapped[str | None] = mapped_column(default=None)
     banner_url: Mapped[str | None] = mapped_column(default=None)
