@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import { Search } from 'lucide-react'
+import { Search, LogOut } from 'lucide-react'
+import { useAuthStore } from '../features/auth/store/use-auth-store'
+import { useAuth } from '../features/auth/hooks/use-auth'
 
 interface HeaderProps {
   showSearch?: boolean
@@ -9,6 +11,9 @@ interface HeaderProps {
 export function Header({ showSearch = true }: HeaderProps) {
   const [query, setQuery] = useState('')
   const navigate = useNavigate()
+
+  const { user, openAuthModal } = useAuthStore()
+  const { logout } = useAuth()
 
   function handleSearch(e: React.SubmitEvent) {
     e.preventDefault()
@@ -42,12 +47,26 @@ export function Header({ showSearch = true }: HeaderProps) {
           <Link to="/events" className="text-sm font-medium hover:text-primary transition hidden md:block">
             Eventos
           </Link>
-          <button 
-            onClick={() => {/* Modal login */}}
-            className="bg-primary text-primary-foreground text-sm font-bold px-5 py-2 rounded-xl hover:bg-primary/90 transition"
-          >
-            Entrar
-          </button>
+
+          {user ? (
+            <div className="flex items-center gap-3">
+              <span className="text-sm font-bold text-foreground">Olá, {user.name.split(' ')[0]}</span>
+              <button
+                onClick={logout}
+                title="Sair"
+                className="p-2 text-foreground-muted hover:text-red-500 transition cursor-pointer"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            </div>
+          ) : (
+            <button 
+              onClick={openAuthModal}
+              className="bg-primary text-primary-foreground text-sm font-bold px-5 py-2 rounded-xl hover:bg-primary/90 transition cursor-pointer"
+            >
+              Entrar
+            </button>
+          )}
         </div>
       </div>
     </header>

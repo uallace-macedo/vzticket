@@ -3,7 +3,7 @@ from datetime import datetime, timedelta, timezone
 import pytest
 from jwt import encode
 
-from vzticket.core.security.exceptions import InvalidTokenError, ExpiredTokenError
+from vzticket.core.security.exceptions import ExpiredTokenError, InvalidTokenError
 from vzticket.core.security.jwt import create_access_token, decode_access_token
 from vzticket.core.settings import settings
 
