@@ -2,10 +2,10 @@ from uuid import uuid4
 
 import pytest
 
-from verzel.modules.users.exceptions import UserAlreadyExistsError, UserNotFoundError
-from verzel.modules.users.model import UserRole
-from verzel.modules.users.schemas import UserCreate
-from verzel.modules.users.service import UserService
+from vzticket.modules.users.exceptions import UserAlreadyExistsError, UserNotFoundError
+from vzticket.modules.users.model import UserRole
+from vzticket.modules.users.schemas import UserCreate
+from vzticket.modules.users.service import UserService
 
 
 async def test_user_service_create_success(session):

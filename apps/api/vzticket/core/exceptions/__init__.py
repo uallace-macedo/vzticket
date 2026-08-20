@@ -4,7 +4,7 @@ from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
-from verzel.core.exceptions.base import AppError
+from vzticket.core.exceptions.base import AppError
 
 
 def register_exception_handlers(app: FastAPI):

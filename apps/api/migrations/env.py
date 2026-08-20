@@ -6,9 +6,9 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
 
-from verzel.core.settings import settings
-from verzel.core.database import table_registry
-import verzel.modules
+from vzticket.core.settings import settings
+from vzticket.core.database import table_registry
+import vzticket.modules
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

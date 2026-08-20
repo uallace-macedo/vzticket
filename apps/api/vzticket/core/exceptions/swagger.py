@@ -1,7 +1,7 @@
 from typing import Type
 
-from verzel.core.exceptions.base import AppError
-from verzel.core.exceptions.schemas import ErrorResponse
+from vzticket.core.exceptions.base import AppError
+from vzticket.core.exceptions.schemas import ErrorResponse
 
 
 def create_error_response(

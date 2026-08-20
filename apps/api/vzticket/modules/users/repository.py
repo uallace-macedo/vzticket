@@ -3,7 +3,7 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from verzel.modules.users.model import User
+from vzticket.modules.users.model import User
 
 
 class UserRepository:

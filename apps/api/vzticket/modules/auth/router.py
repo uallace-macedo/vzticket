@@ -2,16 +2,16 @@ from http import HTTPStatus
 
 from fastapi import APIRouter, Response
 
-from verzel.core.exceptions.swagger import create_error_response
-from verzel.core.settings import settings
-from verzel.modules.auth.dependencies import (
+from vzticket.core.exceptions.swagger import create_error_response
+from vzticket.core.settings import settings
+from vzticket.modules.auth.dependencies import (
     AuthServiceDep,
     CurrentUserDep,
     LoginFormDataDep,
 )
-from verzel.modules.auth.exceptions import InvalidCredentialsError, MissingTokenError
-from verzel.modules.users.exceptions import UserAlreadyExistsError, UserNotFoundError
-from verzel.modules.users.schemas import UserCreate, UserPublic
+from vzticket.modules.auth.exceptions import InvalidCredentialsError, MissingTokenError
+from vzticket.modules.users.exceptions import UserAlreadyExistsError, UserNotFoundError
+from vzticket.modules.users.schemas import UserCreate, UserPublic
 
 router = APIRouter(prefix='/auth', tags=['Auth'])
 

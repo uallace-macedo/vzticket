@@ -2,9 +2,9 @@ from http import HTTPStatus
 
 from fastapi import FastAPI
 
-from verzel.core.exceptions import register_exception_handlers
-from verzel.core.exceptions.schemas import ValidationErrorResponse
-from verzel.router import api_router
+from vzticket.core.exceptions import register_exception_handlers
+from vzticket.core.exceptions.schemas import ValidationErrorResponse
+from vzticket.router import api_router
 
 app = FastAPI(
     title='EliteDEV Verzel - API',

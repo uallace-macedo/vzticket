@@ -41,6 +41,6 @@ asyncio_mode = 'auto'
 
 [tool.taskipy.tasks]
 lint = 'ruff check --fix'
-test = 'pytest --cov=verzel -vv'
+test = 'pytest --cov=vzticket -vv'
 post_test = 'coverage html'
-run = 'fastapi dev verzel/main.py'
+run = 'fastapi dev vzticket/main.py'

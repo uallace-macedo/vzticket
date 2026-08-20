@@ -2,11 +2,11 @@ from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from verzel.core.security.password import generate_hash
-from verzel.modules.users.exceptions import UserAlreadyExistsError, UserNotFoundError
-from verzel.modules.users.model import User
-from verzel.modules.users.repository import UserRepository
-from verzel.modules.users.schemas import UserCreate
+from vzticket.core.security.password import generate_hash
+from vzticket.modules.users.exceptions import UserAlreadyExistsError, UserNotFoundError
+from vzticket.modules.users.model import User
+from vzticket.modules.users.repository import UserRepository
+from vzticket.modules.users.schemas import UserCreate
 
 
 class UserService:

@@ -1,13 +1,13 @@
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from verzel.core.security.jwt import create_access_token
-from verzel.core.security.password import verify_password
-from verzel.core.security.types import TokenPayload
-from verzel.modules.auth.exceptions import InvalidCredentialsError
-from verzel.modules.users.model import User
-from verzel.modules.users.schemas import UserCreate
-from verzel.modules.users.service import UserService
+from vzticket.core.security.jwt import create_access_token
+from vzticket.core.security.password import verify_password
+from vzticket.core.security.types import TokenPayload
+from vzticket.modules.auth.exceptions import InvalidCredentialsError
+from vzticket.modules.users.model import User
+from vzticket.modules.users.schemas import UserCreate
+from vzticket.modules.users.service import UserService
 
 
 class AuthService:

@@ -2,8 +2,8 @@
 import pytest
 from fastapi.security import OAuth2PasswordRequestForm
 
-from verzel.modules.auth.exceptions import InvalidCredentialsError
-from verzel.modules.auth.service import AuthService
+from vzticket.modules.auth.exceptions import InvalidCredentialsError
+from vzticket.modules.auth.service import AuthService
 
 
 async def test_auth_service_login_success(session, user):

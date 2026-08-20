@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from verzel.modules.auth.router import router as auth_router
+from vzticket.modules.auth.router import router as auth_router
 
 api_router = APIRouter(prefix='/api/v1')
 
