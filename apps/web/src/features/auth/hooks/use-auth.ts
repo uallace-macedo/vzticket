@@ -67,8 +67,7 @@ export function useAuth() {
       closeAuthModal();
       loginForm.reset();
       
-      toast.success(`Bem-vindo(a) de volta, ${user.name}!`)
-      navigate(PAGES.PUBLIC.EVENTS);
+      toast.success(`Bem-vindo(a) de volta, ${user.name}!`);
     },
     onError: (error: unknown) => {
       toast.error(getErrorMessage(error))
