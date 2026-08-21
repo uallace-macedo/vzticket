@@ -19,6 +19,7 @@ class Settings(BaseSettings):
     JWT_TOKEN_EXP_MINUTES: int = 40
 
     AUTH_COOKIE_NAME: str = ''
+    WALLET_CLAIM_EXP_MINUTES: int = 15
 
     WEB_URL: str = ''
 
