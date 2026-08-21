@@ -1,9 +1,9 @@
 import uuid
 from datetime import datetime
 from decimal import Decimal
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING, List, Optional
 
-from sqlalchemy import DateTime, ForeignKey, Numeric, String
+from sqlalchemy import DateTime, ForeignKey, Index, Numeric, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from vzticket.core.database import table_registry
@@ -16,6 +16,9 @@ if TYPE_CHECKING:
 @table_registry.mapped_as_dataclass
 class Event:
     __tablename__ = 'tb_events'
+    __table_args__ = (
+        Index('idx_events_state_city', 'state', 'city_slug'),
+    )
 
     id: Mapped[uuid.UUID] = mapped_column(
         init=False,
@@ -30,23 +33,30 @@ class Event:
 
     title: Mapped[str] = mapped_column(String(150), nullable=False)
     description: Mapped[str] = mapped_column(nullable=False)
-
     available_tickets: Mapped[int] = mapped_column(nullable=False)
     ticket_price: Mapped[Decimal] = mapped_column(
         Numeric(10, 2),
         nullable=False
     )
-
-    location: Mapped[str] = mapped_column(String(255), nullable=False)
     event_date: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False
     )
 
-    location_url: Mapped[str | None] = mapped_column(default=None, nullable=True)
+    location_name: Mapped[str] = mapped_column(String(150), nullable=False)
+    cep: Mapped[str] = mapped_column(String(9), nullable=False)
+    address: Mapped[str] = mapped_column(String(255), nullable=False)
+    number: Mapped[str] = mapped_column(String(20), nullable=False)
+    neighborhood: Mapped[str] = mapped_column(String(100), nullable=False)
+    city: Mapped[str] = mapped_column(String(100), nullable=False)
+    city_slug: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
+    state: Mapped[str] = mapped_column(String(2), nullable=False)
 
-    poster_url: Mapped[str | None] = mapped_column(default=None)
-    banner_url: Mapped[str | None] = mapped_column(default=None)
+    poster_url: Mapped[Optional[str]] = mapped_column(String(500), default=None)
+    banner_url: Mapped[Optional[str]] = mapped_column(String(500), default=None)
+    complement: Mapped[Optional[str]] = mapped_column(String(100), default=None)
+    custom_image_url: Mapped[Optional[str]] = mapped_column(String(500), default=None)
+    maps_url: Mapped[Optional[str]] = mapped_column(String(500), default=None)
 
     organizer: Mapped['User'] = relationship(
         init=False,

@@ -8,6 +8,7 @@ from vzticket.modules.events.exceptions import EventNotFoundError
 from vzticket.modules.events.model import Event
 from vzticket.modules.events.repository import EventRepository
 from vzticket.modules.events.schemas import EventCreate, EventsSearch
+from vzticket.modules.events.utils import slugify_city
 
 
 class EventService:
@@ -24,7 +25,8 @@ class EventService:
 
     async def create(self, data: EventCreate) -> Event:
         event = Event(
-            **data.model_dump(mode='python', exclude_unset=True)
+            **data.model_dump(mode='python', exclude_unset=True),
+            city_slug=slugify_city(data.city)
         )
 
         return await self.event_repository.create(event)
@@ -37,8 +39,4 @@ class EventService:
         return event
 
     async def search_events(self, options: EventsSearch) -> list[Event]:
-        return await self.event_repository.search_events(
-            title=options.title,
-            limit=options.limit,
-            offset=options.offset
-        )
+        return await self.event_repository.search_events(options)

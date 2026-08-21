@@ -47,4 +47,4 @@ class TMDBSearchResponse(BaseModel):
 
 class TMDBSearchOptions(BaseModel):
     title: str
-    page: Optional[int] = None
+    page: Optional[int] = Field(ge=1, default=1)
