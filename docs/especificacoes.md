@@ -41,7 +41,10 @@
 erDiagram
   USERS ||--o{ EVENTS : "organizes"
   USERS ||--o{ TICKETS : "purchases"
+  USERS ||--o{ WALLET_TRANSACTIONS : "has"
   EVENTS ||--o{ TICKETS : "has"
+  EVENTS ||--o{ WALLET_TRANSACTIONS : "relates_to"
+  TICKETS ||--o{ WALLET_TRANSACTIONS : "relates_to"
 
   USERS {
     uuid id PK
@@ -49,6 +52,7 @@ erDiagram
     string email UK
     string password
     enum role "ORGANIZER | CLIENT | GATEKEEPER"
+    decimal balance "Numeric(10, 2) - Default: 0.00"
   }
 
   EVENTS {
@@ -83,5 +87,16 @@ erDiagram
     uuid share_token UK
     datetime purchased_at
     datetime validated_at "NULLABLE"
+  }
+
+  WALLET_TRANSACTIONS {
+    uuid id PK
+    uuid user_id FK
+    uuid event_id FK "NULLABLE"
+    uuid ticket_id FK "NULLABLE"
+    enum type "DEPOSIT | TICKET_PURCHASE | TICKET_REFUND | EVENT_CREATION_FEE | EVENT_PAYOUT"
+    decimal amount "Numeric(10, 2)"
+    string description
+    datetime created_at
   }
 ```

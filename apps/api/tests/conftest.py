@@ -64,6 +64,7 @@ async def user(session):
     user_obj = User(
         name='test-user',
         email='test@example.com',
+        image_url=None,
         password=generate_hash('password123'),
         role=UserRole.CLIENT
     )
@@ -84,6 +85,7 @@ async def organizer_user(session):
     user_obj = User(
         name='Organizer User',
         email='organizer@example.com',
+        image_url=None,
         password=generate_hash('password123'),
         role=UserRole.ORGANIZER
     )

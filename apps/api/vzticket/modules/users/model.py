@@ -1,9 +1,10 @@
 import uuid
 from datetime import datetime, timezone
+from decimal import Decimal
 from enum import Enum
 from typing import TYPE_CHECKING, List
 
-from sqlalchemy import DateTime, String
+from sqlalchemy import DECIMAL, DateTime, String
 from sqlalchemy import Enum as SQLEnum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -12,6 +13,7 @@ from vzticket.core.database import table_registry
 if TYPE_CHECKING:
     from vzticket.modules.events.model import Event
     from vzticket.modules.tickets.model import Ticket
+    from vzticket.modules.wallet.model import WalletTransaction
 
 
 class UserRole(str, Enum):
@@ -39,6 +41,18 @@ class User:
         nullable=False
     )
 
+    balance: Mapped[Decimal] = mapped_column(
+        DECIMAL(10, 2),
+        init=False,
+        default=Decimal('0.00'),
+        server_default='0.00'
+    )
+
+    image_url: Mapped[str] = mapped_column(
+        String(255),
+        nullable=True
+    )
+
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         init=False,
@@ -52,6 +66,12 @@ class User:
     )
 
     tickets: Mapped[List['Ticket']] = relationship(
+        init=False,
+        back_populates='user',
+        cascade='all, delete-orphan'
+    )
+
+    wallet_transactions: Mapped[List['WalletTransaction']] = relationship(
         init=False,
         back_populates='user',
         cascade='all, delete-orphan'
