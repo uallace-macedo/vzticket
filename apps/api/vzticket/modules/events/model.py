@@ -29,23 +29,23 @@ class Event:
     )
 
     title: Mapped[str] = mapped_column(String(150), nullable=False)
-    total_capacity: Mapped[int] = mapped_column(nullable=False)
-    available_tickets: Mapped[int] = mapped_column(nullable=False)
+    description: Mapped[str] = mapped_column(nullable=False)
 
+    available_tickets: Mapped[int] = mapped_column(nullable=False)
     ticket_price: Mapped[Decimal] = mapped_column(
         Numeric(10, 2),
         nullable=False
     )
 
+    location: Mapped[str] = mapped_column(String(255), nullable=False)
     event_date: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False
     )
 
-    location: Mapped[str] = mapped_column(String(255), nullable=False)
+    location_url: Mapped[str | None] = mapped_column(default=None, nullable=True)
 
-    external_api_id: Mapped[str | None] = mapped_column(String(100), default=None)
-    description: Mapped[str | None] = mapped_column(default=None)
+    poster_url: Mapped[str | None] = mapped_column(default=None)
     banner_url: Mapped[str | None] = mapped_column(default=None)
 
     organizer: Mapped['User'] = relationship(
