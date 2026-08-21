@@ -55,14 +55,23 @@ erDiagram
     uuid id PK
     uuid organizer_id FK
     string title
-    string description
+    text description
     int available_tickets
-    decimal ticket_price
-    string location
-    string location_url
+    decimal ticket_price "Numeric(10, 2)"
     datetime event_date
-    string poster_url
-    string banner_url
+    string location_name
+    string cep
+    string address
+    string number
+    string neighborhood
+    string city
+    string city_slug "INDEX"
+    string state
+    string complement "NULLABLE"
+    string poster_url "NULLABLE"
+    string banner_url "NULLABLE"
+    string custom_image_url "NULLABLE"
+    string maps_url "NULLABLE"
   }
 
   TICKETS {
