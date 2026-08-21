@@ -3,9 +3,10 @@ from decimal import Decimal
 from typing import Optional
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator, field_serializer
-from vzticket.modules.events.utils import slugify_city
+from pydantic import BaseModel, ConfigDict, Field, field_serializer, field_validator
+
 from vzticket.core.settings import settings
+from vzticket.modules.events.utils import slugify_city
 
 
 class EventsSearch(BaseModel):
@@ -91,7 +92,7 @@ class EventResponse(BaseModel):
     organizer: OrganizerResponse
 
     @field_serializer('poster_url', 'banner_url')
-    def serialize_tmdb_url(self, v: Optional[str]) -> Optional[str]:
+    def serialize_tmdb_url(cls, v: Optional[str]) -> Optional[str]:
         if v and v.startswith('/'):
             return f'{settings.TMDB_IMAGE_BASE_URL}{v}'
         return v

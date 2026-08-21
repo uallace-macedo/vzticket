@@ -10,6 +10,7 @@ from vzticket.modules.events.repository import EventRepository
 from vzticket.modules.events.schemas import EventCreate, EventsSearch
 from vzticket.modules.events.utils import slugify_city
 
+
 class EventService:
     def __init__(self, session: AsyncSession) -> None:
         self.tmdb_client = TMDBClient()

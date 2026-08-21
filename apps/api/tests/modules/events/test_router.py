@@ -14,6 +14,13 @@ async def test_create_event_route_success(organizer_client, organizer_user):
         "ticket_price": 75.50,
         "location": "Teatro Teste",
         "event_date": datetime.now(timezone.utc).isoformat(),
+        "location_name": "Teatro Teste",
+        "cep": "01310-100",
+        "address": "Av. Paulista",
+        "number": "1000",
+        "neighborhood": "Bela Vista",
+        "city": "São Paulo",
+        "state": "SP"
     }
 
     response = await organizer_client.post(V1_EVENTS_URL, json=payload)

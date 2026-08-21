@@ -1,13 +1,12 @@
 import uuid
 from datetime import datetime
 from decimal import Decimal
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING, List, Optional
 
-from sqlalchemy import DateTime, ForeignKey, Numeric, String, Index
+from sqlalchemy import DateTime, ForeignKey, Index, Numeric, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from vzticket.core.database import table_registry
-from typing import Optional
 
 if TYPE_CHECKING:
     from vzticket.modules.tickets.model import Ticket
