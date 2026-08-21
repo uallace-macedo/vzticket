@@ -2,26 +2,34 @@
 
 @theme {
   --color-primary: var(--app-primary);
+  --color-primary-foreground: var(--app-primary-fg);
+  
+  --color-destructive: var(--app-destructive);
+  --color-destructive-foreground: var(--app-destructive-fg);
+  
   --color-background: var(--app-bg);
   --color-background-muted: var(--app-bg-muted);
   --color-foreground: var(--app-fg);
   --color-foreground-muted: var(--app-fg-muted);
-  --color-primary-foreground: var(--app-primary-fg);
 }
 
 :root {
   --app-bg: #FAFAFA;
-  
   --app-fg: #202020;
   --app-fg-muted: #595959;
-  
   --app-bg-muted: #F3F3EF;
   
   --app-primary: #0634CA;
   --app-primary-fg: #FFFFFF;
+  
+  --app-destructive: #E52626;
+  --app-destructive-fg: #FFFFFF;
+
+  --font-sans: 'Sora', sans-serif;
 }
 
 body {
   background-color: var(--app-bg);
   color: var(--app-fg);
+  font-family: var(--font-sans);
 }

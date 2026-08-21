@@ -92,6 +92,7 @@ class EventResponse(BaseModel):
     organizer: OrganizerResponse
 
     @field_serializer('poster_url', 'banner_url')
+    @classmethod
     def serialize_tmdb_url(cls, v: Optional[str]) -> Optional[str]:
         if v and v.startswith('/'):
             return f'{settings.TMDB_IMAGE_BASE_URL}{v}'
