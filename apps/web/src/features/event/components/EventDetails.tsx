@@ -1,11 +1,15 @@
-import { Calendar, MapPin, Share2, Heart } from 'lucide-react';
+import { Calendar, MapPin, Share2 } from 'lucide-react';
 import type { Event } from '../types';
+import { useState } from 'react';
+import { ShareModal } from './ShareModal';
 
 interface EventDetailsProps {
   event: Event;
 }
 
 export function EventDetails({ event }: EventDetailsProps) {
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+
   const formattedDate = new Intl.DateTimeFormat('pt-BR', {
     weekday: 'long',
     day: '2-digit',
@@ -46,7 +50,10 @@ export function EventDetails({ event }: EventDetailsProps) {
       </div>
 
       <div className="flex items-center gap-2 pt-2">
-        <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-foreground/10 text-xs font-bold hover:bg-foreground/5 transition cursor-pointer">
+        <button
+          onClick={() => setIsShareModalOpen(true)}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-foreground/10 text-xs font-bold hover:bg-foreground/5 transition cursor-pointer"
+        >
           <Share2 className="w-3.5 h-3.5" />
           <span>Compartilhar</span>
         </button>
@@ -58,6 +65,12 @@ export function EventDetails({ event }: EventDetailsProps) {
           {event.description || 'Nenhuma descrição informada para este evento.'}
         </p>
       </div>
+
+      <ShareModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        eventTitle={event.title}
+      />
     </div>
   )
 }
