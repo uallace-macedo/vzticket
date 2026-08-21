@@ -3,6 +3,7 @@ import { Layout } from "../components/Layout";
 import { HomePage } from "@/features/home/pages/HomePage";
 import { PAGES } from "@/constants/pages";
 import { EventsPage } from "@/features/event/pages/EventsPage";
+import { EventDetailPage } from "@/features/event/pages/EventDetailPage";
 
 
 export function AppRouter() {
@@ -13,6 +14,7 @@ export function AppRouter() {
         <Route element={<Layout showSearchInHeader={true} />}>
           <Route path={PAGES.PUBLIC.HOME} element={<HomePage />} />
           <Route path={PAGES.PUBLIC.EVENTS} element={<EventsPage />} />
+          <Route path={PAGES.PUBLIC.EVENT} element={<EventDetailPage />} />
         </Route>
 
         {/* Private Routes */}
