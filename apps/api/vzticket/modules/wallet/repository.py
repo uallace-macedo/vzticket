@@ -5,8 +5,8 @@ from uuid import UUID
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from vzticket.modules.wallet.schemas import WalletTransactionSearch
 from vzticket.modules.wallet.model import WalletTransaction
+from vzticket.modules.wallet.schemas import WalletTransactionSearch
 
 
 class WalletRepository:
@@ -27,8 +27,10 @@ class WalletRepository:
         params: WalletTransactionSearch,
     ) -> tuple[Sequence[WalletTransaction], int, int]:
         """Search transactions of a user with pagination and filters"""
-        
-        base_stmt = select(WalletTransaction).where(WalletTransaction.user_id == user_id)
+
+        base_stmt = select(WalletTransaction).where(
+            WalletTransaction.user_id == user_id
+        )
 
         if params.type:
             base_stmt = base_stmt.where(WalletTransaction.type == params.type)

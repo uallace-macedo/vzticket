@@ -19,9 +19,17 @@ class WalletTransactionResponse(BaseModel):
 
 
 class WalletTransactionSearch(BaseModel):
-    type: Optional[TransactionType] = Field(default=None, description="Filtrar por tipo de transação")
+    type: Optional[TransactionType] = Field(
+        default=None,
+        description="Filtrar por tipo de transação"
+    )
     page: int = Field(ge=1, default=1, description="Número da página")
-    per_page: int = Field(ge=1, le=100, default=10, description="Itens por página (máx. 100)")
+    per_page: int = Field(
+        ge=1,
+        le=100,
+        default=10,
+        description="Itens por página (máx. 100)"
+    )
 
 
 class PaginatedTransactionsResponse(BaseModel):
@@ -38,7 +46,10 @@ class WalletBalanceResponse(BaseModel):
 
 
 class DepositRequest(BaseModel):
-    amount: Decimal = Field(gt=0, description='O valor do depósito deve ser maior que zero.')
+    amount: Decimal = Field(
+        gt=0,
+        description='O valor do depósito deve ser maior que zero.'
+    )
 
 
 class DepositResponse(BaseModel):

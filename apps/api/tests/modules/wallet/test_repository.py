@@ -2,12 +2,12 @@ from decimal import Decimal
 
 import pytest
 
-from vzticket.modules.wallet.repository import WalletRepository
-from vzticket.modules.wallet.schemas import WalletTransactionSearch
 from vzticket.modules.wallet.model import (
     TransactionType,
     WalletTransaction,
 )
+from vzticket.modules.wallet.repository import WalletRepository
+from vzticket.modules.wallet.schemas import WalletTransactionSearch
 
 
 @pytest.fixture

@@ -3,6 +3,7 @@ from decimal import Decimal
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from vzticket.modules.users.model import User
+from vzticket.modules.wallet.model import TransactionType, WalletTransaction
 from vzticket.modules.wallet.repository import WalletRepository
 from vzticket.modules.wallet.schemas import (
     DepositResponse,
@@ -11,7 +12,6 @@ from vzticket.modules.wallet.schemas import (
     WalletTransactionResponse,
     WalletTransactionSearch,
 )
-from vzticket.modules.wallet.model import TransactionType, WalletTransaction
 
 
 class WalletService:
@@ -25,7 +25,7 @@ class WalletService:
         params: WalletTransactionSearch,
     ) -> WalletBalanceResponse:
         """Get current balance and paginated transactions of a user"""
-        transactions, total, pages = await self.wallet_repository.get_by_user_id_paginated(
+        data, total, pages = await self.wallet_repository.get_by_user_id_paginated(
             user.id,
             params,
         )
@@ -33,7 +33,7 @@ class WalletService:
         return WalletBalanceResponse(
             balance=user.balance,
             transactions=PaginatedTransactionsResponse(
-                items=[WalletTransactionResponse.model_validate(t) for t in transactions],
+                items=[WalletTransactionResponse.model_validate(t) for t in data],
                 total=total,
                 page=params.page,
                 per_page=params.per_page,
