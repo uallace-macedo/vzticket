@@ -19,9 +19,12 @@
   
   --app-primary: #0634CA;
   --app-primary-fg: #FFFFFF;
+
+  --font-sans: 'Sora', sans-serif;
 }
 
 body {
   background-color: var(--app-bg);
   color: var(--app-fg);
+  font-family: var(--font-sans);
 }
