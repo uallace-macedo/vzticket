@@ -1,4 +1,5 @@
 from uuid import UUID
+from typing import Optional
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
@@ -9,6 +10,7 @@ class UserBase(BaseModel):
     name: str = Field(min_length=3)
     email: EmailStr
     role: UserRole
+    image_url: Optional[str] = Field(default=None)
 
 
 class UserCreate(UserBase):

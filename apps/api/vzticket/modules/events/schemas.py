@@ -62,6 +62,7 @@ class OrganizerResponse(BaseModel):
     id: UUID
     name: str
     email: str
+    image_url: Optional[str]
 
     model_config = ConfigDict(from_attributes=True)
 
