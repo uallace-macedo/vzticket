@@ -17,3 +17,11 @@ class MissingTokenError(AppError):
 
     def __init__(self, message: str = 'Token de acesso inexistente.') -> None:
         super().__init__(message)
+
+
+class NotAllowedError(AppError):
+    status_code = HTTPStatus.UNAUTHORIZED
+    code = 'NOT_ALLOWED'
+
+    def __init__(self, message: str = 'Ação não permitida.') -> None:
+        super().__init__(message)

@@ -1,6 +1,6 @@
 from typing import Optional
 
-from pydantic import BaseModel, ConfigDict, Field, AliasChoices, computed_field
+from pydantic import AliasChoices, BaseModel, Field, computed_field
 
 from vzticket.core.settings import settings
 

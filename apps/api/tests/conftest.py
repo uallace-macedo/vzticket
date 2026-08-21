@@ -77,3 +77,29 @@ async def user(session):
 def auth_client(client: AsyncClient, token: str) -> AsyncClient:
     client.cookies.set(settings.AUTH_COOKIE_NAME, token)
     return client
+
+
+@pytest.fixture
+async def organizer_user(session):
+    user_obj = User(
+        name='Organizer User',
+        email='organizer@example.com',
+        password=generate_hash('password123'),
+        role=UserRole.ORGANIZER
+    )
+    session.add(user_obj)
+    await session.commit()
+    await session.refresh(user_obj)
+    return user_obj
+
+
+@pytest.fixture
+def organizer_client(client: AsyncClient, organizer_user: User) -> AsyncClient:
+    payload = TokenPayload(
+        sub=organizer_user.id,
+        email=organizer_user.email,
+        role=organizer_user.role,
+    )
+    token = create_access_token(payload)
+    client.cookies.set(settings.AUTH_COOKIE_NAME, token)
+    return client
