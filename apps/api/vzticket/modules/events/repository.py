@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 
 from vzticket.modules.events.model import Event
+from vzticket.modules.events.schemas import EventsSearch
 
 
 class EventRepository:
@@ -12,6 +13,7 @@ class EventRepository:
         self.session = session
 
     async def create(self, event: Event) -> Event:
+
         self.session.add(event)
         await self.session.commit()
         await self.session.refresh(event)
@@ -30,19 +32,23 @@ class EventRepository:
 
     async def search_events(
         self,
-        title: str | None,
-        limit: int,
-        offset: int
+        options: EventsSearch
     ) -> list[Event]:
         stmt = (
             select(Event)
             .options(joinedload(Event.organizer))
         )
 
-        if title:
-            stmt = stmt.where(Event.title.ilike(f'%{title}%'))
+        if options.title:
+            stmt = stmt.where(Event.title.ilike(f'%{options.title}%'))
 
-        stmt = stmt.limit(limit).offset(offset)
+        if options.city:
+            stmt = stmt.where(Event.city_slug.ilike(f'%{options.city}%'))
+
+        if options.state:
+            stmt = stmt.where(Event.state.ilike(f'%{options.state}%'))
+
+        stmt = stmt.limit(options.limit).offset(options.offset)
         result = await self.session.execute(stmt)
 
         return list(result.scalars().all())
