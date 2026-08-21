@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Layout } from "../components/Layout";
 import { HomePage } from "@/features/home/pages/HomePage";
 import { PAGES } from "@/constants/pages";
+import { EventsPage } from "@/features/event/pages/EventsPage";
 
 
 export function AppRouter() {
@@ -11,7 +12,7 @@ export function AppRouter() {
         {/* Public Routes */}
         <Route element={<Layout showSearchInHeader={true} />}>
           <Route path={PAGES.PUBLIC.HOME} element={<HomePage />} />
-          <Route path={PAGES.PUBLIC.EVENTS} element={<h1>Lista de Eventos</h1>} />
+          <Route path={PAGES.PUBLIC.EVENTS} element={<EventsPage />} />
         </Route>
 
         {/* Private Routes */}
