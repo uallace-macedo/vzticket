@@ -8,7 +8,8 @@ export const ROUTES = {
     GET_ALL: '/api/v1/events',
     GET_BY_ID: (id: string) => `/api/v1/events/${id}`,
     TMDB: '/api/v1/events/tmdb',
-    CREATE: '/api/v1/events'
+    CREATE: '/api/v1/events',
+    MY_EVENTS: '/api/v1/events/my-events'
   },
   WALLET: {
     GET_BALANCE: '/api/v1/wallet',
