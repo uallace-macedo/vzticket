@@ -25,10 +25,27 @@ class ClaimTokenResponse(BaseModel):
     id: UUID
     token: str
     amount: Decimal
+    type: ClaimType
     status: ClaimTokenStatus
     expires_at: datetime
     created_at: datetime
-    type: ClaimType
     claimed_at: Optional[datetime] = None
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class ClaimTokenSearch(BaseModel):
+    type: Optional[ClaimType] = Field(default=None)
+    status: Optional[ClaimTokenStatus] = Field(default=None)
+    page: int = Field(ge=1, default=1, description='Número da página')
+    per_page: int = Field(
+        ge=1, le=100, default=10, description='Itens por página (máx. 100)'
+    )
+
+
+class PaginatedClaimTokensResponse(BaseModel):
+    items: list[ClaimTokenResponse]
+    total: int
+    page: int
+    per_page: int
+    pages: int

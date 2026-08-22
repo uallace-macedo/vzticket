@@ -22,6 +22,9 @@ from vzticket.modules.wallet_claim_tokens.repository import (
 )
 from vzticket.modules.wallet_claim_tokens.schemas import (
     ClaimTokenCreate,
+    ClaimTokenResponse,
+    ClaimTokenSearch,
+    PaginatedClaimTokensResponse,
 )
 
 
@@ -31,9 +34,7 @@ class WalletClaimTokenService:
         self.repository = WalletClaimTokenRepository(session)
 
     async def create_claim_token(
-        self,
-        user_id: uuid.UUID,
-        data: ClaimTokenCreate
+        self, user_id: uuid.UUID, data: ClaimTokenCreate
     ) -> WalletClaimToken:
         now = datetime.now(timezone.utc)
         expires_at = now + timedelta(minutes=settings.WALLET_CLAIM_EXP_MINUTES)
@@ -51,9 +52,7 @@ class WalletClaimTokenService:
         return await self.repository.create(claim_token)
 
     async def execute_claim(
-        self,
-        token: str,
-        user: Optional[User] = None
+        self, token: str, user: Optional[User] = None
     ) -> WalletClaimToken:
         now = datetime.now(timezone.utc)
         claim_item = await self.repository.get_by_token(token)
@@ -70,7 +69,7 @@ class WalletClaimTokenService:
 
         if claim_item.status == ClaimTokenStatus.EXPIRED or expires_at < now:
             claim_item.status = ClaimTokenStatus.EXPIRED
-            await self.repository.save(claim_item)
+            await self.repository.create(claim_item)
             raise TokenExpiredError()
 
         claim_item.status = ClaimTokenStatus.CLAIMED
@@ -93,7 +92,17 @@ class WalletClaimTokenService:
         elif claim_item.type == ClaimType.EVENT_FEE:
             pass
 
-        return await self.repository.save(claim_item)
+        return await self.repository.create(claim_item)
 
-    async def get_pending_by_user(self, user_id: uuid.UUID) -> list[WalletClaimToken]:
-        return await self.repository.get_pending_by_user(user_id)
+    async def get_claims(
+        self, user_id: uuid.UUID, params: ClaimTokenSearch
+    ) -> PaginatedClaimTokensResponse:
+        data, total, pages = await self.repository.get_claims(user_id, params)
+
+        return PaginatedClaimTokensResponse(
+            items=[ClaimTokenResponse.model_validate(t) for t in data],
+            total=total,
+            page=params.page,
+            per_page=params.per_page,
+            pages=pages,
+        )

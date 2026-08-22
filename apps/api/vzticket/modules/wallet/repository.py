@@ -1,5 +1,4 @@
 import math
-from typing import Sequence
 from uuid import UUID
 
 from sqlalchemy import func, select
@@ -25,7 +24,7 @@ class WalletRepository:
         self,
         user_id: UUID,
         params: WalletTransactionSearch,
-    ) -> tuple[Sequence[WalletTransaction], int, int]:
+    ) -> tuple[list[WalletTransaction], int, int]:
         """Search transactions of a user with pagination and filters"""
 
         base_stmt = select(WalletTransaction).where(
@@ -52,4 +51,4 @@ class WalletRepository:
         result = await self.session.execute(stmt)
         transactions = result.scalars().all()
 
-        return transactions, total, pages
+        return list(transactions), total, pages
