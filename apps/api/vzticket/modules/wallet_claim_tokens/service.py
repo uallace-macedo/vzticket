@@ -1,5 +1,6 @@
 import uuid
 from datetime import datetime, timedelta, timezone
+from typing import Optional
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -13,13 +14,13 @@ from vzticket.modules.wallet_claim_tokens.exceptions import (
 )
 from vzticket.modules.wallet_claim_tokens.model import (
     ClaimTokenStatus,
+    ClaimType,
     WalletClaimToken,
 )
 from vzticket.modules.wallet_claim_tokens.repository import (
     WalletClaimTokenRepository,
 )
 from vzticket.modules.wallet_claim_tokens.schemas import (
-    ClaimTokenClaim,
     ClaimTokenCreate,
 )
 
@@ -40,21 +41,22 @@ class WalletClaimTokenService:
         claim_token = WalletClaimToken(
             token=str(uuid.uuid4()),
             amount=data.amount,
+            type=data.type,
             created_at=now,
             expires_at=expires_at,
             user_id=user_id,
+            target_id=data.target_id,
         )
 
         return await self.repository.create(claim_token)
 
-    async def claim_token(
-        self, data: ClaimTokenClaim, user: User
+    async def execute_claim(
+        self,
+        token: str,
+        user: Optional[User] = None
     ) -> WalletClaimToken:
         now = datetime.now(timezone.utc)
-        claim_item = await self.repository.get_by_token_for_update(
-            user.id,
-            data.token
-        )
+        claim_item = await self.repository.get_by_token(token)
 
         if not claim_item:
             raise TokenNotFoundError()
@@ -73,18 +75,24 @@ class WalletClaimTokenService:
 
         claim_item.status = ClaimTokenStatus.CLAIMED
         claim_item.claimed_at = now
-        claim_item.user_id = user.id
 
-        user.balance += claim_item.amount
+        if claim_item.type == ClaimType.DEPOSIT:
+            if user:
+                user.balance += claim_item.amount
+                transaction = WalletTransaction(
+                    user_id=user.id,
+                    type=TransactionType.DEPOSIT,
+                    amount=claim_item.amount,
+                    description='Depósito via QR Code/PIX',
+                )
+                self.session.add(transaction)
 
-        transaction = WalletTransaction(
-            user_id=user.id,
-            type=TransactionType.DEPOSIT,
-            amount=claim_item.amount,
-            description='Depósito via PIX',
-        )
+        elif claim_item.type == ClaimType.TICKET_PURCHASE:
+            pass
 
-        self.session.add(transaction)
+        elif claim_item.type == ClaimType.EVENT_FEE:
+            pass
+
         return await self.repository.save(claim_item)
 
     async def get_pending_by_user(self, user_id: uuid.UUID) -> list[WalletClaimToken]:
