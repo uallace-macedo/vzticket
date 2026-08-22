@@ -14,6 +14,7 @@ if TYPE_CHECKING:
     from vzticket.modules.events.model import Event
     from vzticket.modules.tickets.model import Ticket
     from vzticket.modules.wallet.model import WalletTransaction
+    from vzticket.modules.wallet_claim_tokens.model import WalletClaimToken
 
 
 class UserRole(str, Enum):
@@ -75,4 +76,9 @@ class User:
         init=False,
         back_populates='user',
         cascade='all, delete-orphan'
+    )
+
+    wallet_claims: Mapped[List['WalletClaimToken']] = relationship(
+        init=False,
+        back_populates='user'
     )

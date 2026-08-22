@@ -42,6 +42,7 @@ erDiagram
   USERS ||--o{ EVENTS : "organizes"
   USERS ||--o{ TICKETS : "purchases"
   USERS ||--o{ WALLET_TRANSACTIONS : "has"
+  USERS ||--o{ WALLET_CLAIM_TOKENS : "creates_or_claims"
   EVENTS ||--o{ TICKETS : "has"
   EVENTS ||--o{ WALLET_TRANSACTIONS : "relates_to"
   TICKETS ||--o{ WALLET_TRANSACTIONS : "relates_to"
@@ -98,5 +99,16 @@ erDiagram
     decimal amount "Numeric(10, 2)"
     string description
     datetime created_at
+  }
+
+  WALLET_CLAIM_TOKENS {
+    uuid id PK
+    string token UK "UUID v4"
+    uuid user_id FK "NULLABLE"
+    decimal amount "Numeric(10, 2)"
+    enum status "PENDING | CLAIMED | EXPIRED"
+    datetime expires_at
+    datetime created_at
+    datetime claimed_at "NULLABLE"
   }
 ```

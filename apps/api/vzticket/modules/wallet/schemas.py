@@ -43,16 +43,3 @@ class PaginatedTransactionsResponse(BaseModel):
 class WalletBalanceResponse(BaseModel):
     balance: Decimal
     transactions: PaginatedTransactionsResponse
-
-
-class DepositRequest(BaseModel):
-    amount: Decimal = Field(
-        gt=0,
-        description='O valor do depósito deve ser maior que zero.'
-    )
-
-
-class DepositResponse(BaseModel):
-    message: str
-    new_balance: Decimal
-    transaction: WalletTransactionResponse
