@@ -1,6 +1,7 @@
 from http import HTTPStatus
 
 from fastapi import APIRouter, Depends
+from fastapi.responses import HTMLResponse
 
 from vzticket.modules.auth.dependencies import (
     CurrentUserDep,
@@ -16,6 +17,7 @@ from vzticket.modules.wallet_claim_tokens.schemas import (
     ClaimTokenCreate,
     ClaimTokenResponse,
 )
+from vzticket.modules.wallet_claim_tokens.utils import render_deposit_success_html
 
 router = APIRouter(prefix='/wallet/claims', tags=['Wallet Claims'])
 organizer_only = Depends(RoleChecker(allowed_routes=[UserRole.ORGANIZER]))
@@ -38,7 +40,7 @@ async def create_claim_token(
 @router.get(
     '/pay',
     status_code=HTTPStatus.OK,
-    response_model=ClaimTokenResponse,
+    response_class=HTMLResponse,
 )
 async def process_payment_via_qr(
     service: WalletClaimTokenServiceDep,
@@ -49,7 +51,10 @@ async def process_payment_via_qr(
     Endpoint público acionado pelo QR Code / Link de Pagamento.
     Processa depósitos, compras de ingressos ou taxas de eventos.
     """
-    return await service.execute_claim(token=data.token, user=current_user)
+    claim_data = await service.execute_claim(token=data.token, user=current_user)
+    html_content = render_deposit_success_html(claim_data)
+
+    return HTMLResponse(content=html_content, status_code=HTTPStatus.OK)
 
 
 @router.get(

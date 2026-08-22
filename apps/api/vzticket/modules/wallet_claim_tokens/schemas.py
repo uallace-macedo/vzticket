@@ -28,6 +28,7 @@ class ClaimTokenResponse(BaseModel):
     status: ClaimTokenStatus
     expires_at: datetime
     created_at: datetime
+    type: ClaimType
     claimed_at: Optional[datetime] = None
 
     model_config = ConfigDict(from_attributes=True)
