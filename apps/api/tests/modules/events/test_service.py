@@ -8,8 +8,12 @@ from vzticket.core.libs.tmdb.schemas import (
     TMDBSearchResponse,
     TMDBSearchResult,
 )
-from vzticket.modules.events.exceptions import EventNotFoundError
-from vzticket.modules.events.schemas import EventsSearch
+from vzticket.modules.events.exceptions import (
+    EventNotFoundError,
+    InsufficientBalanceForFeeError,
+)
+from vzticket.modules.events.model import EventStatus
+from vzticket.modules.events.schemas import EventsSearch, PaymentMethod
 from vzticket.modules.events.service import EventService
 
 
@@ -48,24 +52,54 @@ async def test_event_service_search_tmdb_success(session, monkeypatch):
     assert response.results[0].title == 'Matrix'
 
 
-async def test_event_service_create_success(session, event_data):
+async def test_event_service_create_with_balance_success(
+    session, organizer_with_balance, event_data
+):
     service = EventService(session)
 
-    event = await service.create(event_data)
+    created_response = await service.create(organizer_with_balance, event_data)
 
-    assert event.id is not None
-    assert event.title == "Show de Rock"
-    assert event.available_tickets == event_data.available_tickets
+    assert created_response.event.id is not None
+    assert created_response.event.title == "Show de Rock"
+    assert created_response.event.status == EventStatus.ACTIVE
+    assert created_response.payment_method == PaymentMethod.BALANCE
+    assert created_response.payment_token is None
 
 
-async def test_event_service_get_by_id_success(session, event_data):
+async def test_event_service_create_with_pix_success(
+    session, organizer_user, event_data
+):
     service = EventService(session)
-    created_event = await service.create(event_data)
+    event_data.payment_method = PaymentMethod.PIX
 
-    found_event = await service.get_by_id(created_event.id)
+    created_response = await service.create(organizer_user, event_data)
 
-    assert found_event.id == created_event.id
-    assert found_event.title == created_event.title
+    assert created_response.event.id is not None
+    assert created_response.event.status == EventStatus.PENDING_FEE
+    assert created_response.payment_method == PaymentMethod.PIX
+    assert created_response.payment_token is not None
+
+
+async def test_event_service_create_insufficient_balance_raises_error(
+    session, organizer_user, event_data
+):
+    service = EventService(session)
+    organizer_user.balance = 0.0
+
+    with pytest.raises(InsufficientBalanceForFeeError):
+        await service.create(organizer_user, event_data)
+
+
+async def test_event_service_get_by_id_success(
+    session, organizer_with_balance, event_data
+):
+    service = EventService(session)
+    created_response = await service.create(organizer_with_balance, event_data)
+
+    found_event = await service.get_by_id(created_response.event.id)
+
+    assert found_event.id == created_response.event.id
+    assert found_event.title == created_response.event.title
 
 
 async def test_event_service_get_by_id_not_found_raises_error(session):
@@ -75,9 +109,11 @@ async def test_event_service_get_by_id_not_found_raises_error(session):
         await service.get_by_id(uuid4())
 
 
-async def test_event_service_search_events_success(session, event_data):
+async def test_event_service_search_events_success(
+    session, organizer_with_balance, event_data
+):
     service = EventService(session)
-    await service.create(event_data)
+    await service.create(organizer_with_balance, event_data)
 
     options = EventsSearch(title="Rock", limit=10, offset=0)
     results = await service.search_events(options)

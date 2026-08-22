@@ -48,11 +48,11 @@ class User:
         server_default='0.00'
     )
     pending_balance: Mapped[Decimal] = mapped_column(
-        Numeric(10, 2), 
+        Numeric(10, 2),
         default=Decimal('0.00'),
         server_default='0.00'
     )
-    
+
     image_url: Mapped[Optional[str]] = mapped_column(
         String(255),
         default=None,

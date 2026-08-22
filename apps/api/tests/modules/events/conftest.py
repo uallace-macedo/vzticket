@@ -1,18 +1,16 @@
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
-from uuid import uuid4
 
 import pytest
 
-from vzticket.modules.events.schemas import EventCreate
+from vzticket.modules.events.schemas import EventCreate, PaymentMethod
 
 
 @pytest.fixture
-def event_data(organizer_user):
+def event_data():
     return EventCreate(
-        organizer_id=organizer_user.id,
         title="Show de Rock",
-        description="Descrição do show",
+        description="Descrição do show de teste bastante completa",
         available_tickets=100,
         ticket_price=Decimal("50.00"),
         event_date=datetime.now(timezone.utc) + timedelta(days=5),
@@ -23,17 +21,33 @@ def event_data(organizer_user):
         neighborhood="Barra Funda",
         city="São Paulo",
         state="SP",
+        payment_method=PaymentMethod.BALANCE,
     )
 
 
 @pytest.fixture
 def event_payload():
     return {
-        "organizer_id": str(uuid4()),
         "title": "Show de Teste",
-        "description": "Descrição do show de teste",
+        "description": "Descrição do show de teste bastante completa",
         "available_tickets": 50,
         "ticket_price": 75.50,
-        "location": "Teatro Teste",
-        "event_date": datetime.now(timezone.utc).isoformat(),
+        "event_date": (datetime.now(timezone.utc) + timedelta(days=10)).isoformat(),
+        "location_name": "Teatro Teste",
+        "cep": "01310-100",
+        "address": "Av. Paulista",
+        "number": "1000",
+        "neighborhood": "Bela Vista",
+        "city": "São Paulo",
+        "state": "SP",
+        "payment_method": "balance",
     }
+
+
+@pytest.fixture
+async def organizer_with_balance(session, organizer_user):
+    organizer_user.balance = Decimal("1000.00")
+    session.add(organizer_user)
+    await session.commit()
+    await session.refresh(organizer_user)
+    return organizer_user

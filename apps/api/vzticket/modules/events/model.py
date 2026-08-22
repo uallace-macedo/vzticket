@@ -11,8 +11,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from vzticket.core.database import table_registry
 
 if TYPE_CHECKING:
-    from vzticket.modules.users.model import User
     from vzticket.modules.tickets.model import Ticket
+    from vzticket.modules.users.model import User
 
 
 class EventStatus(str, Enum):
