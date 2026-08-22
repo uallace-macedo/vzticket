@@ -41,6 +41,10 @@ export function EventDetailPage() {
     );
   }
 
+  const isSalesStarted = event.sales_start_at
+    ? new Date(event.sales_start_at).getTime() <= new Date().getTime()
+    : true;
+
   const handleCheckout = () => {
     alert(`Redirecionando para o checkout de ${quantity} ingresso(s)...`);
   };
@@ -73,6 +77,7 @@ export function EventDetailPage() {
           <TicketSelector
             ticketInfo={event.ticket_info}
             quantity={quantity}
+            salesStartAt={event.sales_start_at}
             onQuantityChange={setQuantity}
           />
         </div>
@@ -84,11 +89,13 @@ export function EventDetailPage() {
         )}
       </div>
 
-      <EventFooter
-        totalPricePerUnit={event.ticket_info.total_price}
-        quantity={quantity}
-        onCheckout={handleCheckout}
-      />
+      {isSalesStarted && (
+        <EventFooter
+          totalPricePerUnit={event.ticket_info.total_price}
+          quantity={quantity}
+          onCheckout={handleCheckout}
+        />
+      )}
     </div>
   );
 }

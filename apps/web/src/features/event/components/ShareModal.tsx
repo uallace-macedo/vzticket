@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { X, Copy, Check, MessageCircle } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface ShareModalProps {
   isOpen: boolean;
@@ -19,7 +20,7 @@ export function ShareModal({ isOpen, onClose, eventTitle }: ShareModalProps) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      console.error('Falha ao copiar o link:', err);
+      toast.error('Falha ao copiar o link');
     }
   }
 

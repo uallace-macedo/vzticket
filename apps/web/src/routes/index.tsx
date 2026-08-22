@@ -5,6 +5,8 @@ import { PAGES } from "@/constants/pages";
 import { EventsPage } from "@/features/event/pages/EventsPage";
 import { EventDetailPage } from "@/features/event/pages/EventDetailPage";
 import { WalletPage } from "@/features/wallet/pages/WalletPage";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { OrganizerEventsPage } from "@/features/organizer/pages/OrganizerEventsPage";
 
 
 export function AppRouter() {
@@ -20,10 +22,15 @@ export function AppRouter() {
 
         {/* Private Routes */}
         <Route element={<Layout showSearchInHeader={false} />}>
-          <Route path="/events/:id" element={<h1>Detalhes do Evento</h1>} />
-          <Route path={PAGES.PRIVATE.PROFILE} element={<h1>Minha Conta</h1>} />
-          <Route path={PAGES.PRIVATE.TICKETS} element={<h1>Meus Ingressos</h1>} />
-          <Route path={PAGES.PRIVATE.WALLET} element={<WalletPage />} />
+          <Route element={<ProtectedRoute />}>
+            <Route path={PAGES.PRIVATE.PROFILE} element={<h1>Minha Conta</h1>} />
+            <Route path={PAGES.PRIVATE.TICKETS} element={<h1>Meus Ingressos</h1>} />
+            <Route path={PAGES.PRIVATE.WALLET} element={<WalletPage />} />
+          </Route>
+
+          <Route element={<ProtectedRoute requiredRole="organizer" />}>
+            <Route path={PAGES.PRIVATE.ORGANIZER.EVENTS} element={<OrganizerEventsPage /> } />
+          </Route>
         </Route>
       </Routes>
     </BrowserRouter>

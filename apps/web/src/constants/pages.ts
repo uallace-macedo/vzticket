@@ -7,6 +7,9 @@ export const PAGES = {
   PRIVATE: {
     PROFILE: '/profile',
     WALLET: '/wallet',
-    TICKETS: '/tickets'
+    TICKETS: '/tickets',
+    ORGANIZER: {
+      EVENTS: '/organizer/events'
+    }
   }
 }

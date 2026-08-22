@@ -1,9 +1,27 @@
-useNavigate
-import { ArrowRight, ShieldCheck } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { ArrowRight, ShieldCheck } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
+import { useAuthStore } from '@/features/auth/store/use-auth-store';
+import { PAGES } from '@/constants/pages';
 
 export function HeroSection() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const { user, openAuthModal } = useAuthStore();
+
+  const handleAnnounceClick = () => {
+    if (!user) {
+      toast.info('Você precisa estar logado para anunciar um ingresso.');
+      openAuthModal();
+      return;
+    }
+
+    if (user.role !== 'organizer') {
+      toast.info('Você precisa ser um "Organizador de Eventos" para anunciar um evento.');
+      return;
+    }
+
+    navigate(PAGES.PRIVATE.ORGANIZER.EVENTS);
+  }
 
   return (
     <section className="max-w-6xl mx-auto px-4 py-12 md:py-20 grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
@@ -49,7 +67,7 @@ export function HeroSection() {
           </button>
 
           <button
-            onClick={() => {/* create event */}}
+            onClick={handleAnnounceClick}
             className="w-full sm:w-auto bg-background-muted text-foreground border border-foreground/10 font-bold px-6 py-3.5 rounded-xl hover:bg-foreground/5 transition flex items-center justify-center gap-2 cursor-pointer"
           >
             Anunciar ingresso
