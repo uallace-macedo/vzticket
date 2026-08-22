@@ -7,6 +7,7 @@ import { EventDetails } from '../components/EventDetails';
 import { TicketSelector } from '../components/TicketSelector';
 import { EventFooter } from '../components/EventFooter';
 import { EventOrganizerInfo } from '../components/EventOrganizerInfo';
+import { PAGES } from '@/constants/pages';
 
 export function EventDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -47,7 +48,7 @@ export function EventDetailPage() {
   return (
     <div className="max-w-6xl mx-auto px-4 py-6 space-y-8">
       <Link
-        to="/"
+        to={PAGES.PUBLIC.EVENTS}
         className="inline-flex items-center gap-2 text-xs font-bold text-foreground-muted hover:text-foreground transition"
       >
         <ArrowLeft className="w-4 h-4" />

@@ -6,6 +6,7 @@ export const PAGES = {
   },
   PRIVATE: {
     PROFILE: '/profile',
+    WALLET: '/wallet',
     TICKETS: '/tickets'
   }
 }
