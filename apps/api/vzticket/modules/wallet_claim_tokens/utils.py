@@ -1,52 +1,61 @@
 # ruff: noqa: E501, PLR2004
 from datetime import datetime
+
 from vzticket.modules.wallet_claim_tokens.schemas import ClaimTokenResponse
 
 CLAIM_TYPE_CONFIG = {
-  "deposit": {
-    "title": "Depósito Confirmado",
-    "subtitle": "O saldo já está disponível na sua carteira!",
-    "amount_label": "Valor Depositado",
-    "badge_text": "Saldo Adicionado",
-  },
-  "ticket_purchase": {
-    "title": "Ingresso Garantido",
-    "subtitle": "Sua compra foi confirmada com sucesso!",
-    "amount_label": "Valor Pago",
-    "badge_text": "Compra Realizada",
-  },
-  "event_fee": {
-    "title": "Taxa Processada",
-    "subtitle": "O pagamento da taxa do evento foi confirmado!",
-    "amount_label": "Valor da Taxa",
-    "badge_text": "Taxa de Evento",
-  },
+    "deposit": {
+      "title": "Depósito Confirmado",
+      "subtitle": "O saldo já está disponível na sua carteira!",
+      "amount_label": "Valor Depositado",
+      "badge_text": "Saldo Adicionado",
+    },
+    "ticket_purchase": {
+      "title": "Ingresso Garantido",
+      "subtitle": "Sua compra foi confirmada com sucesso!",
+      "amount_label": "Valor Pago",
+      "badge_text": "Compra Realizada",
+    },
+    "event_fee": {
+      "title": "Taxa Processada",
+      "subtitle": "O pagamento da taxa do evento foi confirmado!",
+      "amount_label": "Valor da Taxa",
+      "badge_text": "Taxa de Evento",
+    },
 }
 
 
 def render_deposit_success_html(claim_data: ClaimTokenResponse) -> str:
-  claim_type_str = str(getattr(claim_data, "type", "deposit")).lower()
-  config = CLAIM_TYPE_CONFIG.get(claim_type_str, CLAIM_TYPE_CONFIG["deposit"])
+    claim_type_str = str(getattr(claim_data, "type", "deposit")).lower()
+    config = CLAIM_TYPE_CONFIG.get(
+        claim_type_str, CLAIM_TYPE_CONFIG["deposit"]
+    )
 
-  try:
-    amount_float = float(claim_data.amount)
-    formatted_amount = f"R$ {amount_float:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
-  except (ValueError, TypeError):
-    formatted_amount = f"R$ {claim_data.amount}"
-
-  raw_date = claim_data.claimed_at
-  formatted_date = "---"
-  if raw_date:
     try:
-      dt = datetime.fromisoformat(str(raw_date).replace("Z", "+00:00"))
-      formatted_date = dt.strftime("%d/%m/%Y às %H:%M")
-    except ValueError:
-      formatted_date = str(raw_date)
+        amount_float = float(claim_data.amount)
+        formatted_amount = f"R$ {amount_float:,.2f}".replace(
+        ",", "X"
+        ).replace(".", ",").replace("X", ".")
+    except (ValueError, TypeError):
+        formatted_amount = f"R$ {claim_data.amount}"
 
-  claim_id = str(claim_data.id)
-  short_id = f"{claim_id[:8]}...{claim_id[-4:]}" if len(claim_id) > 12 else claim_id
+    raw_date = claim_data.claimed_at
+    formatted_date = "---"
+    if raw_date:
+        try:
+            dt = datetime.fromisoformat(str(raw_date).replace("Z", "+00:00"))
+            formatted_date = dt.strftime("%d/%m/%Y às %H:%M")
+        except ValueError:
+            formatted_date = str(raw_date)
 
-  return f"""<!DOCTYPE html>
+    claim_id = str(claim_data.id)
+    short_id = (
+        f"{claim_id[:8]}...{claim_id[-4:]}"
+        if len(claim_id) > 12
+        else claim_id
+    )
+
+    return f"""<!DOCTYPE html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />

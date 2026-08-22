@@ -35,8 +35,12 @@ async def test_process_payment_via_qr_success(auth_client):
     )
 
     assert response.status_code == HTTPStatus.OK
-    json_data = response.json()
-    assert json_data['status'] == ClaimTokenStatus.CLAIMED
+    assert "text/html" in response.headers["content-type"]
+
+    html_text = response.text
+    assert "<!DOCTYPE html>" in html_text
+    assert "Depósito Confirmado" in html_text
+    assert "R$ 100,00" in html_text
 
 
 async def test_process_payment_via_qr_not_found(auth_client):
