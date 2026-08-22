@@ -10,6 +10,7 @@ export const ROUTES = {
   },
   WALLET: {
     GET_BALANCE: '/api/v1/wallet',
-    CREATE_CLAIM: '/api/v1/wallet/claims'
+    CREATE_CLAIM: '/api/v1/wallet/claims',
+    CLAIMS: '/api/v1/wallet/claims'
   }
 }
