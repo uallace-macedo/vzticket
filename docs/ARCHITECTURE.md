@@ -22,8 +22,10 @@ erDiagram
   USERS ||--o{ TICKETS : "purchases"
   USERS ||--o{ WALLET_TRANSACTIONS : "has"
   USERS ||--o{ WALLET_CLAIM_TOKENS : "creates_or_claims"
+  USERS ||--o{ EVENT_PAYOUTS : "receives"
   EVENTS ||--o{ TICKETS : "has"
   EVENTS ||--o{ WALLET_TRANSACTIONS : "relates_to"
+  EVENTS ||--o| EVENT_PAYOUTS : "generates"
   TICKETS ||--o{ WALLET_TRANSACTIONS : "relates_to"
 
   USERS {
@@ -104,5 +106,18 @@ erDiagram
     uuid user_id FK "NULLABLE"
     datetime claimed_at "NULLABLE"
     enum status "PENDING | CLAIMED | EXPIRED"
+  }
+
+  EVENT_PAYOUTS {
+    uuid id PK
+    uuid event_id FK UK
+    uuid organizer_id FK
+    decimal gross_amount "Numeric(10, 2)"
+    decimal platform_fee_amount "Numeric(10, 2)"
+    decimal net_amount "Numeric(10, 2)"
+    enum status "PENDING | PROCESSING | PAID | FAILED"
+    datetime scheduled_for
+    datetime paid_at "NULLABLE"
+    datetime created_at
   }
 ```
