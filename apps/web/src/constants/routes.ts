@@ -7,5 +7,10 @@ export const ROUTES = {
   EVENTS: {
     GET_ALL: '/api/v1/events',
     GET_BY_ID: (id: string) => `/api/v1/events/${id}`,
+  },
+  WALLET: {
+    GET_BALANCE: '/api/v1/wallet',
+    CREATE_CLAIM: '/api/v1/wallet/claims',
+    CLAIMS: '/api/v1/wallet/claims'
   }
 }

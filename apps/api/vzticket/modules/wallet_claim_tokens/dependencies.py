@@ -3,7 +3,10 @@ from typing import Annotated
 from fastapi import Depends, Query
 
 from vzticket.core.database import SessionDep
-from vzticket.modules.wallet_claim_tokens.schemas import ClaimTokenClaim
+from vzticket.modules.wallet_claim_tokens.schemas import (
+    ClaimTokenClaim,
+    ClaimTokenSearch,
+)
 from vzticket.modules.wallet_claim_tokens.service import WalletClaimTokenService
 
 
@@ -18,3 +21,4 @@ WalletClaimTokenServiceDep = Annotated[
 ]
 
 ClaimTokenQuery = Annotated[ClaimTokenClaim, Query()]
+ClaimTokenSearchDep = Annotated[ClaimTokenSearch, Query()]
