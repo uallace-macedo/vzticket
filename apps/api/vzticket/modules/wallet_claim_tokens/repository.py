@@ -20,17 +20,13 @@ class WalletClaimTokenRepository:
         await self.session.refresh(claim_token)
         return claim_token
 
-    async def get_by_token_for_update(
+    async def get_by_token(
         self,
-        user_id: UUID,
         token: str
     ) -> WalletClaimToken | None:
         stmt = (
             select(WalletClaimToken)
-            .where(
-                WalletClaimToken.token == token,
-                WalletClaimToken.user_id == user_id
-            )
+            .where(WalletClaimToken.token == token)
             .with_for_update()
         )
         result = await self.session.execute(stmt)

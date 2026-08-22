@@ -2,19 +2,17 @@ from http import HTTPStatus
 
 from fastapi import APIRouter, Depends
 
-from vzticket.core.exceptions.swagger import create_error_response
-from vzticket.modules.auth.dependencies import CurrentUserDep, RoleChecker
+from vzticket.modules.auth.dependencies import (
+    CurrentUserDep,
+    OptionalCurrentUserDep,
+    RoleChecker,
+)
 from vzticket.modules.users.model import UserRole
 from vzticket.modules.wallet_claim_tokens.dependencies import (
+    ClaimTokenQuery,
     WalletClaimTokenServiceDep,
 )
-from vzticket.modules.wallet_claim_tokens.exceptions import (
-    TokenAlreadyClaimedError,
-    TokenExpiredError,
-    TokenNotFoundError,
-)
 from vzticket.modules.wallet_claim_tokens.schemas import (
-    ClaimTokenClaim,
     ClaimTokenCreate,
     ClaimTokenResponse,
 )
@@ -37,32 +35,21 @@ async def create_claim_token(
     return await service.create_claim_token(current_user.id, data)
 
 
-@router.post(
-    '/claim',
+@router.get(
+    '/pay',
     status_code=HTTPStatus.OK,
     response_model=ClaimTokenResponse,
-    responses={
-        **create_error_response(
-            TokenNotFoundError,
-            'Token não encontrado.',
-        ),
-        **create_error_response(
-            TokenAlreadyClaimedError,
-            'Token já resgatado.',
-        ),
-        **create_error_response(
-            TokenExpiredError,
-            'Token expirado.',
-        ),
-    },
 )
-async def claim_token(
-    data: ClaimTokenClaim,
+async def process_payment_via_qr(
     service: WalletClaimTokenServiceDep,
-    current_user: CurrentUserDep,
+    data: ClaimTokenQuery,
+    current_user: OptionalCurrentUserDep = None
 ):
-    """Consome o token e adiciona o saldo na carteira do usuário logado"""
-    return await service.claim_token(data, current_user)
+    """
+    Endpoint público acionado pelo QR Code / Link de Pagamento.
+    Processa depósitos, compras de ingressos ou taxas de eventos.
+    """
+    return await service.execute_claim(token=data.token, user=current_user)
 
 
 @router.get(

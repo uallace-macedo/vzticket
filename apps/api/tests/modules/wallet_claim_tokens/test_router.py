@@ -24,15 +24,14 @@ async def test_create_claim_token_success(auth_client):
     assert json_data['status'] == ClaimTokenStatus.PENDING
 
 
-async def test_claim_token_success(auth_client):
+async def test_process_payment_via_qr_success(auth_client):
     create_res = await auth_client.post(
         V1_WALLET_CLAIMS_URL, json={'amount': 100.00}
     )
     token_str = create_res.json()['token']
 
-    claim_payload = {'token': token_str}
-    response = await auth_client.post(
-        f'{V1_WALLET_CLAIMS_URL}/claim', json=claim_payload
+    response = await auth_client.get(
+        f'{V1_WALLET_CLAIMS_URL}/pay', params={'token': token_str}
     )
 
     assert response.status_code == HTTPStatus.OK
@@ -40,10 +39,10 @@ async def test_claim_token_success(auth_client):
     assert json_data['status'] == ClaimTokenStatus.CLAIMED
 
 
-async def test_claim_token_not_found(auth_client):
-    claim_payload = {'token': '00000000-0000-0000-0000-000000000000'}
-    response = await auth_client.post(
-        f'{V1_WALLET_CLAIMS_URL}/claim', json=claim_payload
+async def test_process_payment_via_qr_not_found(auth_client):
+    fake_token = '00000000-0000-0000-0000-000000000000'
+    response = await auth_client.get(
+        f'{V1_WALLET_CLAIMS_URL}/pay', params={'token': fake_token}
     )
 
     assert response.status_code == HTTPStatus.NOT_FOUND

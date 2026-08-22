@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, Optional
 
 from fastapi import Depends, Request
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
@@ -41,9 +41,25 @@ async def get_current_user(
     return await user_service.get_user_by_id(payload.sub)
 
 
+async def get_optional_current_user(
+    session: SessionDep,
+    token: Annotated[str, Depends(get_token_from_cookie)],
+    auth_schema: Annotated[str | None, Depends(oauth2_scheme)] = None
+) -> Optional[User]:
+    try:
+        return await get_current_user(
+            session, token, auth_schema
+        )
+    except Exception:
+        return None
+
+
 AuthServiceDep = Annotated[AuthService, Depends(get_auth_service)]
 LoginFormDataDep = Annotated[OAuth2PasswordRequestForm, Depends()]
 CurrentUserDep = Annotated[User, Depends(get_current_user)]
+OptionalCurrentUserDep = Annotated[
+    Optional[User], Depends(get_optional_current_user)
+]
 
 
 class RoleChecker:
