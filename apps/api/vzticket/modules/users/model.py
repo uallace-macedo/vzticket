@@ -2,9 +2,9 @@ import uuid
 from datetime import datetime, timezone
 from decimal import Decimal
 from enum import Enum
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING, List, Optional
 
-from sqlalchemy import DECIMAL, DateTime, String
+from sqlalchemy import DECIMAL, DateTime, Numeric, String
 from sqlalchemy import Enum as SQLEnum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -36,7 +36,6 @@ class User:
     name: Mapped[str] = mapped_column(String(100), nullable=False)
     email: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)
     password: Mapped[str] = mapped_column(String(255), nullable=False)
-
     role: Mapped[UserRole] = mapped_column(
         SQLEnum(UserRole, native_enum=False),
         nullable=False
@@ -48,9 +47,15 @@ class User:
         default=Decimal('0.00'),
         server_default='0.00'
     )
+    pending_balance: Mapped[Decimal] = mapped_column(
+        Numeric(10, 2),
+        default=Decimal('0.00'),
+        server_default='0.00'
+    )
 
-    image_url: Mapped[str] = mapped_column(
+    image_url: Mapped[Optional[str]] = mapped_column(
         String(255),
+        default=None,
         nullable=True
     )
 

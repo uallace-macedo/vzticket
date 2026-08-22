@@ -2,9 +2,11 @@ import uuid
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from vzticket.core.settings import settings
+from vzticket.modules.events.model import Event, EventStatus
 from vzticket.modules.users.model import User
 from vzticket.modules.wallet.model import TransactionType, WalletTransaction
 from vzticket.modules.wallet_claim_tokens.exceptions import (
@@ -76,10 +78,16 @@ class WalletClaimTokenService:
         claim_item.claimed_at = now
 
         if claim_item.type == ClaimType.DEPOSIT:
-            if user:
-                user.balance += claim_item.amount
+            target_user = user
+            if not target_user and claim_item.user_id:
+                stmt_user = select(User).where(User.id == claim_item.user_id)
+                res_user = await self.session.execute(stmt_user)
+                target_user = res_user.scalar_one_or_none()
+
+            if target_user:
+                target_user.balance += claim_item.amount
                 transaction = WalletTransaction(
-                    user_id=user.id,
+                    user_id=target_user.id,
                     type=TransactionType.DEPOSIT,
                     amount=claim_item.amount,
                     description='Depósito via QR Code/PIX',
@@ -90,7 +98,24 @@ class WalletClaimTokenService:
             pass
 
         elif claim_item.type == ClaimType.EVENT_FEE:
-            pass
+            if claim_item.target_id:
+                stmt_event = select(Event).where(Event.id == claim_item.target_id)
+                res_event = await self.session.execute(stmt_event)
+                event = res_event.scalar_one_or_none()
+
+                if event:
+                    event.status = EventStatus.ACTIVE
+
+                    target_user_id = user.id if user else claim_item.user_id
+                    if target_user_id:
+                        transaction = WalletTransaction(
+                            user_id=target_user_id,
+                            event_id=event.id,
+                            type=TransactionType.EVENT_CREATION_FEE,
+                            amount=claim_item.amount,
+                            description=f'Taxa de criação do evento: {event.title}',
+                        )
+                        self.session.add(transaction)
 
         return await self.repository.create(claim_item)
 

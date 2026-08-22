@@ -21,7 +21,12 @@ class Settings(BaseSettings):
     AUTH_COOKIE_NAME: str = ''
     WALLET_CLAIM_EXP_MINUTES: int = 15
 
+    TICKET_FEE_FIXED: float = 1.50
+    TICKET_FEE_PERCENTAGE: float = 0.06
+    EVENT_CREATION_FEE_PERCENTAGE: float = 0.18
+
     WEB_URL: str = ''
+    API_URL: str = ''
 
     TMDB_BASE_URL: str = ''
     TMDB_API_KEY: str = ''

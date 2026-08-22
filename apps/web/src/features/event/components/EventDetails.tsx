@@ -18,7 +18,10 @@ export function EventDetails({ event }: EventDetailsProps) {
     minute: '2-digit',
   }).format(new Date(event.event_date));
 
-  const fullAddress = `${event.address}${event.number ? `, ${event.number}` : ''} - ${event.city} / ${event.state}`;
+  const location = event.location;
+  const fullAddress = `${location?.address || ''}${
+    location?.number ? `, ${location.number}` : ''
+  } - ${location?.city || ''} / ${location?.state || ''}`;
 
   return (
     <div className="space-y-6">
@@ -34,17 +37,19 @@ export function EventDetails({ event }: EventDetailsProps) {
 
         <div className="flex items-center gap-2.5">
           <MapPin className="w-4 h-4 text-primary shrink-0" />
-          {event.maps_url ? (
+          {location?.maps_url ? (
             <a
-              href={event.maps_url}
+              href={location.maps_url}
               target="_blank"
               rel="noopener noreferrer"
               className="underline hover:text-primary transition line-clamp-1"
             >
-              {event.location_name} ({fullAddress})
+              {location.name} ({fullAddress})
             </a>
           ) : (
-            <span className="line-clamp-1">{event.location_name} ({fullAddress})</span>
+            <span className="line-clamp-1">
+              {location?.name} ({fullAddress})
+            </span>
           )}
         </div>
       </div>
@@ -72,5 +77,5 @@ export function EventDetails({ event }: EventDetailsProps) {
         eventTitle={event.title}
       />
     </div>
-  )
+  );
 }

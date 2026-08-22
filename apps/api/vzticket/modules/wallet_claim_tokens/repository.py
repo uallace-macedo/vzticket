@@ -47,7 +47,7 @@ class WalletClaimTokenRepository:
                 WalletClaimToken.expires_at <= now
             )
             .values(status=ClaimTokenStatus.EXPIRED)
-            .execution_options(synchronize_session="fetch") 
+            .execution_options(synchronize_session="fetch")
         )
         await self.session.execute(update_stmt)
         await self.session.commit()

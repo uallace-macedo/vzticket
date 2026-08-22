@@ -1,20 +1,29 @@
 import { create } from 'zustand';
-import type { User } from '../types';
+import { persist, createJSONStorage } from 'zustand/middleware';
+import type { LoginResponse } from '../types';
 
 interface AuthState {
-  user: User | null;
+  user: LoginResponse | null;
   isAuthModalOpen: boolean;
-
-  setUser: (user: User | null) => void;
+  setUser: (user: LoginResponse | null) => void;
   openAuthModal: () => void;
   closeAuthModal: () => void;
 }
 
-export const useAuthStore = create<AuthState>(set => ({
-  user: null,
-  isAuthModalOpen: false,
+export const useAuthStore = create<AuthState>()(
+  persist(
+    (set) => ({
+      user: null,
+      isAuthModalOpen: false,
 
-  setUser: user => set({ user }),
-  openAuthModal: () => set({ isAuthModalOpen: true }),
-  closeAuthModal: () => set({ isAuthModalOpen: false })
-}));
+      setUser: (user) => set({ user }),
+      openAuthModal: () => set({ isAuthModalOpen: true }),
+      closeAuthModal: () => set({ isAuthModalOpen: false }),
+    }),
+    {
+      name: 'vzticket-user',
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({ user: state.user }),
+    }
+  )
+);
