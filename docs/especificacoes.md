@@ -51,9 +51,9 @@ erDiagram
     uuid id PK
     string name
     string email UK
-    string password
     enum role "ORGANIZER | CLIENT | GATEKEEPER"
-    decimal balance "Numeric(10, 2) - Default: 0.00"
+    decimal balance "Numeric(10, 2) - Saldo disponível"
+    decimal pending_balance "Numeric(10, 2) - Saldo retido de eventos"
   }
 
   EVENTS {
@@ -61,9 +61,18 @@ erDiagram
     uuid organizer_id FK
     string title
     text description
+    enum status "PENDING_FEE | ACTIVE | CANCELLED | FINISHED"
+    
     int available_tickets
     decimal ticket_price "Numeric(10, 2)"
+    decimal service_fee "Numeric(10, 2) - Default: 2.80"
+    string ticket_title "Ex: Entrada Geral"
+    text ticket_description "NULLABLE"
+    
     datetime event_date
+    datetime sales_start_at "NULLABLE"
+    datetime sales_end_at "NULLABLE"
+
     string location_name
     string cep
     string address
@@ -73,10 +82,14 @@ erDiagram
     string city_slug "INDEX"
     string state
     string complement "NULLABLE"
+    
     string poster_url "NULLABLE"
     string banner_url "NULLABLE"
     string custom_image_url "NULLABLE"
     string maps_url "NULLABLE"
+    
+    datetime created_at
+    datetime updated_at
   }
 
   TICKETS {
@@ -104,11 +117,13 @@ erDiagram
   WALLET_CLAIM_TOKENS {
     uuid id PK
     string token UK "UUID v4"
-    uuid user_id FK "NULLABLE"
     decimal amount "Numeric(10, 2)"
-    enum status "PENDING | CLAIMED | EXPIRED"
-    datetime expires_at
     datetime created_at
+    datetime expires_at
+    enum type "DEPOSIT | "TICKET_PURCHASE | EVENT_FEE"
+    uuid target_id "NULLABLE"
+    uuid user_id FK "NULLABLE"
     datetime claimed_at "NULLABLE"
+    enum status "PENDING | CLAIMED | EXPIRED"
   }
 ```
