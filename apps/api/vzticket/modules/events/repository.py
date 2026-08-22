@@ -48,3 +48,20 @@ class EventRepository:
         result = await self.session.execute(stmt)
 
         return list(result.scalars().all())
+
+    async def get_by_organizer_id(self, organizer_id: UUID) -> list[Event]:
+        stmt = (
+            select(Event)
+            .options(joinedload(Event.organizer))
+            .where(Event.organizer_id == organizer_id)
+            .order_by(Event.created_at.desc())
+        )
+        result = await self.session.execute(stmt)
+
+        return list(result.scalars().all())
+
+    async def update(self, event: Event) -> Event:
+        self.session.add(event)
+        await self.session.commit()
+        await self.session.refresh(event)
+        return event

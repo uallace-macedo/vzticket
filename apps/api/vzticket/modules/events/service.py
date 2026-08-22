@@ -9,6 +9,7 @@ from vzticket.core.settings import settings
 from vzticket.modules.events.exceptions import (
     EventNotFoundError,
     InsufficientBalanceForFeeError,
+    NotEventOwnerError
 )
 from vzticket.modules.events.model import Event, EventStatus
 from vzticket.modules.events.repository import EventRepository
@@ -18,6 +19,7 @@ from vzticket.modules.events.schemas import (
     EventResponse,
     EventsSearch,
     PaymentMethod,
+    EventUpdate
 )
 from vzticket.modules.events.utils import slugify_city
 from vzticket.modules.users.model import User
@@ -123,3 +125,31 @@ class EventService:
 
     async def search_events(self, options: EventsSearch) -> list[Event]:
         return await self.event_repository.search_events(options)
+
+    async def get_my_events(self, organizer_id: UUID) -> list[Event]:
+        return await self.event_repository.get_by_organizer_id(organizer_id)
+
+    async def update(
+        self, event_id: UUID, user: User, data: EventUpdate
+    ) -> Event:
+        event = await self.event_repository.get_by_id(event_id)
+        if not event:
+            raise EventNotFoundError()
+
+        if event.organizer_id != user.id:
+            raise NotEventOwnerError()
+
+        update_data = data.model_dump(exclude_unset=True)
+
+        if 'city' in update_data:
+            event.city_slug = slugify_city(update_data['city'])
+
+        if 'ticket_price' in update_data:
+            event.service_fee = self._calculate_ticket_service_fee(
+                update_data['ticket_price']
+            )
+
+        for field, value in update_data.items():
+            setattr(event, field, value)
+
+        return await self.event_repository.update(event)

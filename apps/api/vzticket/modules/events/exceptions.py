@@ -29,3 +29,13 @@ class EventAlreadyActiveError(AppError):
         self, message: str = 'Este evento já está ativo e com a taxa paga'
     ) -> None:
         super().__init__(message)
+
+
+class NotEventOwnerError(AppError):
+    status_code: int = HTTPStatus.FORBIDDEN
+    code: str = 'NOT_EVENT_OWNER'
+
+    def __init__(
+        self, message: str = 'Você não tem permissão para alterar este evento'
+    ) -> None:
+        super().__init__(message)

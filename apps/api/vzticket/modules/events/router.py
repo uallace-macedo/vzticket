@@ -15,11 +15,13 @@ from vzticket.modules.events.dependencies import (
 from vzticket.modules.events.exceptions import (
     EventNotFoundError,
     InsufficientBalanceForFeeError,
+    NotEventOwnerError
 )
 from vzticket.modules.events.schemas import (
     EventCreate,
     EventCreatedResponse,
     EventResponse,
+    EventUpdate
 )
 from vzticket.modules.users.model import UserRole
 
@@ -84,6 +86,20 @@ async def search_events(
 
 
 @router.get(
+    '/my-events',
+    status_code=HTTPStatus.OK,
+    response_model=list[EventResponse],
+    dependencies=[organizer_only],
+)
+async def get_my_events(
+    event_service: EventServiceDep,
+    current_user: CurrentUserDep,
+):
+    """Retorna todos os eventos criados pelo organizador logado"""
+    return await event_service.get_my_events(current_user.id)
+
+
+@router.get(
     '/{event_id}',
     status_code=HTTPStatus.OK,
     response_model=EventResponse,
@@ -99,3 +115,27 @@ async def get_event_by_id(
 ):
     """Busca os detalhes de um evento pelo id"""
     return await event_service.get_by_id(event_id)
+
+
+@router.patch(
+    '/{event_id}',
+    status_code=HTTPStatus.OK,
+    response_model=EventResponse,
+    dependencies=[organizer_only],
+    responses={
+        **create_error_response(
+            EventNotFoundError, 'Evento não encontrado.'
+        ),
+        **create_error_response(
+            NotEventOwnerError, 'Você não tem permissão para alterar este evento.'
+        ),
+    },
+)
+async def update_event(
+    event_id: UUID,
+    event_service: EventServiceDep,
+    data: EventUpdate,
+    current_user: CurrentUserDep,
+):
+    """Atualiza os dados de um evento (somente o organizador dono do evento)"""
+    return await event_service.update(event_id, current_user, data)

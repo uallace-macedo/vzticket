@@ -165,3 +165,49 @@ class EventCreatedResponse(BaseModel):
         default=None,
         description='UUID do WalletClaimToken gerado caso o pagamento seja PIX',
     )
+
+
+class EventUpdate(BaseModel):
+    title: Optional[str] = Field(default=None, min_length=3, max_length=150)
+    description: Optional[str] = Field(default=None, min_length=10)
+
+    available_tickets: Optional[int] = Field(default=None, ge=1)
+    ticket_price: Optional[Decimal] = Field(default=None, ge=Decimal('0.00'), decimal_places=2)
+    ticket_title: Optional[str] = Field(default=None, max_length=100)
+    ticket_description: Optional[str] = Field(default=None)
+
+    event_date: Optional[datetime] = Field(default=None)
+    sales_start_at: Optional[datetime] = Field(default=None)
+    sales_end_at: Optional[datetime] = Field(default=None)
+
+    location_name: Optional[str] = Field(default=None, max_length=150)
+    cep: Optional[str] = Field(default=None, min_length=9, max_length=9, pattern=r'^\d{5}-\d{3}$')
+    address: Optional[str] = Field(default=None, max_length=255)
+    number: Optional[str] = Field(default=None, max_length=20)
+    neighborhood: Optional[str] = Field(default=None, max_length=100)
+    city: Optional[str] = Field(default=None, max_length=100)
+    state: Optional[str] = Field(default=None, min_length=2, max_length=2)
+    complement: Optional[str] = Field(default=None)
+
+    poster_url: Optional[str] = Field(default=None)
+    banner_url: Optional[str] = Field(default=None)
+    custom_image_url: Optional[str] = Field(default=None)
+    maps_url: Optional[str] = Field(default=None)
+
+    @field_validator('event_date')
+    @classmethod
+    def validate_future_date(cls, v: Optional[datetime]) -> Optional[datetime]:
+        if v is not None:
+            now = datetime.now(timezone.utc)
+            if v.tzinfo is None:
+                v = v.replace(tzinfo=timezone.utc)
+            if v <= now:
+                raise ValueError('A data do evento deve ser no futuro')
+        return v
+
+    @field_validator('state')
+    @classmethod
+    def normalize_state(cls, v: Optional[str]) -> Optional[str]:
+        if v is not None:
+            return v.upper()
+        return v
