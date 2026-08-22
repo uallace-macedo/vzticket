@@ -11,6 +11,7 @@ from vzticket.modules.events.dependencies import (
     EventSearchDep,
     EventServiceDep,
     SearchTMDBOptions,
+    MyEventsSearchDep
 )
 from vzticket.modules.events.exceptions import (
     EventNotFoundError,
@@ -21,7 +22,8 @@ from vzticket.modules.events.schemas import (
     EventCreate,
     EventCreatedResponse,
     EventResponse,
-    EventUpdate
+    EventUpdate,
+    PaginatedEventsResponse
 )
 from vzticket.modules.users.model import UserRole
 
@@ -88,15 +90,16 @@ async def search_events(
 @router.get(
     '/my-events',
     status_code=HTTPStatus.OK,
-    response_model=list[EventResponse],
+    response_model=PaginatedEventsResponse,
     dependencies=[organizer_only],
 )
 async def get_my_events(
     event_service: EventServiceDep,
     current_user: CurrentUserDep,
+    params: MyEventsSearchDep,
 ):
-    """Retorna todos os eventos criados pelo organizador logado"""
-    return await event_service.get_my_events(current_user.id)
+    """Retorna todos os eventos criados pelo organizador logado de forma paginada"""
+    return await event_service.get_my_events(current_user.id, params)
 
 
 @router.get(
