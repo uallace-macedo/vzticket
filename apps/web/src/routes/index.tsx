@@ -7,6 +7,7 @@ import { EventDetailPage } from "@/features/event/pages/EventDetailPage";
 import { WalletPage } from "@/features/wallet/pages/WalletPage";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { OrganizerEventsPage } from "@/features/organizer/pages/OrganizerEventsPage";
+import { CheckoutPage } from "@/features/ticket/pages/CheckoutPage";
 
 
 export function AppRouter() {
@@ -26,6 +27,7 @@ export function AppRouter() {
             <Route path={PAGES.PRIVATE.PROFILE} element={<h1>Minha Conta</h1>} />
             <Route path={PAGES.PRIVATE.TICKETS} element={<h1>Meus Ingressos</h1>} />
             <Route path={PAGES.PRIVATE.WALLET} element={<WalletPage />} />
+            <Route path={PAGES.PRIVATE.EVENTS.CHECKOUT_BASE} element={<CheckoutPage />} />
           </Route>
 
           <Route element={<ProtectedRoute requiredRole="organizer" />}>

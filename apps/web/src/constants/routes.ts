@@ -15,5 +15,8 @@ export const ROUTES = {
     GET_BALANCE: '/api/v1/wallet',
     CREATE_CLAIM: '/api/v1/wallet/claims',
     CLAIMS: '/api/v1/wallet/claims'
+  },
+  TICKETS: {
+    PURCHASE: (event_id: string) =>  `/api/v1/tickets/events/${event_id}/purchase`
   }
 }

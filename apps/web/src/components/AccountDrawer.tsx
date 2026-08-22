@@ -28,7 +28,7 @@ export function AccountDrawer({ isOpen, onClose }: AccountDrawerProps) {
 
   return (
     <div
-      className={`fixed inset-0 z-50 transition-all duration-300 ease-out ${
+      className={`fixed inset-0 z-100 transition-all duration-300 ease-out ${
         isOpen
           ? 'pointer-events-auto bg-black/1 backdrop-blur-md opacity-98'
           : 'pointer-events-none bg-black/0 backdrop-blur-none opacity-0'
