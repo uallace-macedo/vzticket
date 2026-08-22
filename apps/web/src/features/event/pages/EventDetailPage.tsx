@@ -12,7 +12,7 @@ import { PAGES } from '@/constants/pages';
 export function EventDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { data: event, isLoading, isError } = useEvent(id || '');
-  
+
   const [quantity, setQuantity] = useState(0);
 
   if (isLoading) {
@@ -20,7 +20,7 @@ export function EventDetailPage() {
       <div className="flex justify-center items-center min-h-[60vh]">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
-    )
+    );
   }
 
   if (isError || !event) {
@@ -38,15 +38,15 @@ export function EventDetailPage() {
           <span>Voltar para eventos</span>
         </Link>
       </div>
-    )
+    );
   }
 
   const handleCheckout = () => {
-    alert(`Iniciando checkout de ${quantity} ingresso(s) para ${event.title}`);
-  }
+    alert(`Redirecionando para o checkout de ${quantity} ingresso(s)...`);
+  };
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-6 space-y-8">
+    <div className="max-w-6xl mx-auto px-4 py-6 space-y-8 pb-28">
       <Link
         to={PAGES.PUBLIC.EVENTS}
         className="inline-flex items-center gap-2 text-xs font-bold text-foreground-muted hover:text-foreground transition"
@@ -58,10 +58,9 @@ export function EventDetailPage() {
       <EventHero event={event} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-        
         <div className="lg:col-span-2 space-y-8 order-1">
           <EventDetails event={event} />
-          
+
           {event.organizer && (
             <div className="hidden lg:block">
               <EventOrganizerInfo organizer={event.organizer} />
@@ -72,8 +71,7 @@ export function EventDetailPage() {
         <div className="space-y-4 order-2">
           <h2 className="text-xl font-black text-foreground">Ingressos</h2>
           <TicketSelector
-            price={event.ticket_price}
-            availableTickets={event.available_tickets}
+            ticketInfo={event.ticket_info}
             quantity={quantity}
             onQuantityChange={setQuantity}
           />
@@ -87,10 +85,10 @@ export function EventDetailPage() {
       </div>
 
       <EventFooter
-        ticketPrice={event.ticket_price}
+        totalPricePerUnit={event.ticket_info.total_price}
         quantity={quantity}
         onCheckout={handleCheckout}
       />
     </div>
-  )
+  );
 }

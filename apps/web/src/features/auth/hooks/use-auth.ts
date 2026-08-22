@@ -81,6 +81,10 @@ export function useAuth() {
       
       toast.info('Sessão encerrada com sucesso.');
       navigate(PAGES.PUBLIC.HOME);
+    },
+    onError: () => {
+      setUser(null);
+      navigate(PAGES.PUBLIC.HOME);
     }
   })
 

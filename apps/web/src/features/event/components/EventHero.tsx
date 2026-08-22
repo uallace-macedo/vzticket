@@ -1,12 +1,15 @@
-import type { Event } from '../types'
+import type { Event } from '../types';
 
 interface EventHeroProps {
-  event: Event
+  event: Event;
 }
 
 export function EventHero({ event }: EventHeroProps) {
-  const poster = event.poster_url || event.custom_image_url || '/placeholder-event.jpg'
-  const banner = event.banner_url || poster
+  const poster =
+    event.media?.poster_url ||
+    event.media?.custom_image_url ||
+    '/placeholder-event.jpg';
+  const banner = event.media?.banner_url || poster;
 
   return (
     <div className="relative w-full min-h-[300px] sm:min-h-[420px] overflow-hidden rounded-3xl bg-background-muted flex items-center justify-center">
@@ -26,5 +29,5 @@ export function EventHero({ event }: EventHeroProps) {
         />
       </div>
     </div>
-  )
+  );
 }

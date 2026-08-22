@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom';
 import type { Event } from '../types';
 
 interface EventCardProps {
@@ -6,7 +6,10 @@ interface EventCardProps {
 }
 
 export function EventCard({ event }: EventCardProps) {
-  const image = event.poster_url || event.custom_image_url || '/placeholder-event.jpg';
+  const image =
+    event.media?.poster_url ||
+    event.media?.custom_image_url ||
+    '/placeholder-event.jpg';
 
   const formattedDate = new Intl.DateTimeFormat('pt-BR', {
     weekday: 'short',
@@ -35,12 +38,12 @@ export function EventCard({ event }: EventCardProps) {
           {formattedDate}
         </div>
 
-        {event.city && (
+        {event.location?.city && (
           <div className="inline-flex items-center text-[10px] font-medium text-foreground-muted bg-foreground/5 px-2.5 py-1 rounded-full w-fit uppercase tracking-wider">
-            {event.city}
+            {event.location.city}
           </div>
         )}
       </div>
     </Link>
-  )
+  );
 }
