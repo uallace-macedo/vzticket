@@ -62,12 +62,15 @@ class WalletClaimTokenService:
         if claim_item.status == ClaimTokenStatus.CLAIMED:
             raise TokenAlreadyClaimedError()
 
-        if claim_item.status == ClaimTokenStatus.EXPIRED or claim_item.expires_at < now:
+        expires_at = claim_item.expires_at
+        if expires_at.tzinfo is None:
+            expires_at = expires_at.replace(tzinfo=timezone.utc)
+
+        if claim_item.status == ClaimTokenStatus.EXPIRED or expires_at < now:
             claim_item.status = ClaimTokenStatus.EXPIRED
             await self.repository.save(claim_item)
             raise TokenExpiredError()
 
-        
         claim_item.status = ClaimTokenStatus.CLAIMED
         claim_item.claimed_at = now
         claim_item.user_id = user.id
