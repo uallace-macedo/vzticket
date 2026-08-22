@@ -6,7 +6,7 @@ from fastapi import APIRouter
 from vzticket.core.exceptions.swagger import create_error_response
 from vzticket.modules.auth.dependencies import CurrentUserDep
 from vzticket.modules.events.exceptions import EventNotFoundError
-from vzticket.modules.tickets.dependencies import TicketServiceDep
+from vzticket.modules.tickets.dependencies import TicketServiceDep, TicketSearchDep
 from vzticket.modules.tickets.exceptions import (
     EventNotActiveError,
     EventSalesEndedError,
@@ -19,6 +19,7 @@ from vzticket.modules.tickets.schemas import (
     TicketPurchase,
     TicketPurchaseResponse,
     TicketResponse,
+    PaginatedTicketsResponse
 )
 
 router = APIRouter(prefix='/tickets', tags=['Tickets'])
@@ -64,13 +65,14 @@ async def purchase_tickets(
 @router.get(
     '/my-tickets',
     status_code=HTTPStatus.OK,
-    response_model=list[TicketResponse],
+    response_model=PaginatedTicketsResponse,
 )
 async def get_my_tickets(
     ticket_service: TicketServiceDep,
+    params: TicketSearchDep,
     current_user: CurrentUserDep,
 ):
-    return await ticket_service.get_user_tickets(current_user.id)
+    return await ticket_service.get_user_tickets(current_user.id, params)
 
 
 @router.get(

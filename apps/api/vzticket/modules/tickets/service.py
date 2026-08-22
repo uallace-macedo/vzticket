@@ -21,8 +21,11 @@ from vzticket.modules.tickets.repository import TicketRepository
 from vzticket.modules.tickets.schemas import (
     TicketPaymentMethod,
     TicketPurchase,
+    TicketSearch,
     TicketPurchaseResponse,
     TicketResponse,
+    PaginatedTicketsResponse,
+
 )
 from vzticket.modules.users.model import User
 from vzticket.modules.wallet.model import TransactionType, WalletTransaction
@@ -183,9 +186,19 @@ class TicketService:
 
         return await self.ticket_repository.create_many(tickets_to_create)
 
-    async def get_user_tickets(self, user_id: uuid.UUID) -> list[Ticket]:
-        return await self.ticket_repository.get_by_user_id(user_id)
+    async def get_user_tickets(
+        self, user_id: uuid.UUID, params: TicketSearch
+    ) -> PaginatedTicketsResponse:
+        data, total, pages = await self.ticket_repository.get_by_user_id(user_id, params)
 
+        return PaginatedTicketsResponse(
+            items=[TicketResponse.model_validate(t) for t in data],
+            total=total,
+            page=params.page,
+            per_page=params.per_page,
+            pages=pages,
+        )
+    
     async def get_ticket_by_id(self, ticket_id: uuid.UUID) -> Ticket:
         ticket = await self.ticket_repository.get_by_id(ticket_id)
         if not ticket:

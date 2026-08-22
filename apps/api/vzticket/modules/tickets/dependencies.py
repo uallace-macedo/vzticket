@@ -1,9 +1,10 @@
 from typing import Annotated
 
-from fastapi import Depends
+from fastapi import Depends, Query
 
 from vzticket.core.database import SessionDep
 from vzticket.modules.tickets.service import TicketService
+from vzticket.modules.tickets.schemas import TicketSearch
 
 
 def get_ticket_service(session: SessionDep) -> TicketService:
@@ -11,3 +12,4 @@ def get_ticket_service(session: SessionDep) -> TicketService:
 
 
 TicketServiceDep = Annotated[TicketService, Depends(get_ticket_service)]
+TicketSearchDep = Annotated[TicketSearch, Query()]

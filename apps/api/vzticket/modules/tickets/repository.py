@@ -1,10 +1,12 @@
+from math import ceil
 from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 
 from vzticket.modules.tickets.model import Ticket
+from vzticket.modules.tickets.schemas import TicketSearch
 
 
 class TicketRepository:
@@ -27,12 +29,32 @@ class TicketRepository:
         result = await self.session.execute(stmt)
         return result.scalar_one_or_none()
 
-    async def get_by_user_id(self, user_id: UUID) -> list[Ticket]:
+    async def get_by_user_id(
+        self,
+        user_id: UUID,
+        params: TicketSearch,
+    ) -> tuple[list[Ticket], int, int]:
+        base_stmt = select(Ticket).where(Ticket.user_id == user_id)
+
+        if params.status:
+            base_stmt = base_stmt.where(Ticket.status == params.status)
+
+        count_stmt = select(func.count()).select_from(base_stmt.subquery())
+        total_result = await self.session.execute(count_stmt)
+        total = total_result.scalar_one()
+
+        offset = (params.page - 1) * params.per_page
+        pages = ceil(total / params.per_page) if total > 0 else 1
+
         stmt = (
-            select(Ticket)
+            base_stmt
             .options(joinedload(Ticket.event))
-            .where(Ticket.user_id == user_id)
             .order_by(Ticket.purchased_at.desc())
+            .offset(offset)
+            .limit(params.per_page)
         )
+
         result = await self.session.execute(stmt)
-        return list(result.scalars().all())
+        tickets = result.scalars().all()
+
+        return list(tickets), total, pages
