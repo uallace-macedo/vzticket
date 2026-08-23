@@ -46,7 +46,7 @@ export function TransactionItem({ transaction }: TransactionItemProps) {
 
         <div className="min-w-0 space-y-0.5">
           <div className="flex items-center gap-2">
-            <p className="text-xs sm:text-sm font-bold text-foreground truncate">
+            <p title={transaction.description} className="text-xs sm:text-sm font-bold text-foreground truncate">
               {transaction.description}
             </p>
           </div>

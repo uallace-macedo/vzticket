@@ -1,6 +1,7 @@
 from uuid import UUID
+from typing import Optional
 
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 
@@ -49,19 +50,43 @@ class EventRepository:
 
         return list(result.scalars().all())
 
-    async def get_by_organizer_id(self, organizer_id: UUID) -> list[Event]:
-        stmt = (
-            select(Event)
-            .options(joinedload(Event.organizer))
-            .where(Event.organizer_id == organizer_id)
-            .order_by(Event.created_at.desc())
-        )
-        result = await self.session.execute(stmt)
+    async def get_by_organizer_id(
+        self, 
+        organizer_id: UUID, 
+        page: int = 1, 
+        per_page: int = 10,
+        status: Optional[EventStatus] = None
+    ) -> tuple[list[Event], int]:
+        base_stmt = select(Event).where(Event.organizer_id == organizer_id)
+        
+        if status:
+            base_stmt = base_stmt.where(Event.status == status)
 
-        return list(result.scalars().all())
+        count_stmt = select(func.count()).select_from(base_stmt.subquery())
+        total_result = await self.session.execute(count_stmt)
+        total = total_result.scalar_one()
+
+        offset = (page - 1) * per_page
+        data_stmt = (
+            base_stmt
+            .options(joinedload(Event.organizer))
+            .order_by(Event.created_at.desc())
+            .offset(offset)
+            .limit(per_page)
+        )
+        
+        result = await self.session.execute(data_stmt)
+        items = list(result.scalars().all())
+
+        return items, total
 
     async def update(self, event: Event) -> Event:
         self.session.add(event)
         await self.session.commit()
         await self.session.refresh(event)
         return event
+
+    async def get_by_id_for_update(self, event_id: UUID) -> Optional[Event]:
+        stmt = select(Event).where(Event.id == event_id).with_for_update()
+        result = await self.session.execute(stmt)
+        return result.scalar_one_or_none()

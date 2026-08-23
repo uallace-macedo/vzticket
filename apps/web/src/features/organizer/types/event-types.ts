@@ -77,3 +77,59 @@ export interface ViaCepResponse {
   siafi: string;
   erro?: boolean;
 }
+
+export interface EventTicketInfo {
+  title: string;
+  description: string | null;
+  available_tickets: number;
+  ticket_price: number;
+  service_fee: number;
+  total_price: number;
+}
+
+export interface EventLocation {
+  name: string;
+  cep: string;
+  address: string;
+  number: string;
+  neighborhood: string;
+  city: string;
+  state: string;
+  complement: string | null;
+  maps_url: string;
+}
+
+export interface EventMedia {
+  poster_url: string | null;
+  banner_url: string | null;
+  custom_image_url: string | null;
+}
+
+export interface OrganizerEvent {
+  id: string;
+  title: string;
+  description: string;
+  status: 'active' | 'inactive' | 'cancelled';
+  event_date: string;
+  sales_start_at: string | null;
+  sales_end_at: string | null;
+  ticket_info: EventTicketInfo;
+  location: EventLocation;
+  media: EventMedia;
+  created_at: string;
+}
+
+export interface PaginatedEventsResponse {
+  items: OrganizerEvent[];
+  total: number;
+  page: number;
+  pages: number;
+  per_page: number;
+  total_tickets_sold?: number;
+}
+
+export interface GetOrganizerEventsParams {
+  page?: number;
+  per_page?: number;
+  search?: string;
+}

@@ -1,3 +1,4 @@
+from math import ceil
 from decimal import ROUND_HALF_UP, Decimal
 from uuid import UUID
 
@@ -19,7 +20,9 @@ from vzticket.modules.events.schemas import (
     EventResponse,
     EventsSearch,
     PaymentMethod,
-    EventUpdate
+    EventUpdate,
+    PaginatedEventsResponse,
+    MyEventsSearch
 )
 from vzticket.modules.events.utils import slugify_city
 from vzticket.modules.users.model import User
@@ -126,9 +129,28 @@ class EventService:
     async def search_events(self, options: EventsSearch) -> list[Event]:
         return await self.event_repository.search_events(options)
 
-    async def get_my_events(self, organizer_id: UUID) -> list[Event]:
-        return await self.event_repository.get_by_organizer_id(organizer_id)
+    async def get_my_events(
+        self, 
+        organizer_id: UUID, 
+        params: MyEventsSearch
+    ) -> PaginatedEventsResponse:
+        items, total = await self.event_repository.get_by_organizer_id(
+            organizer_id=organizer_id,
+            page=params.page,
+            per_page=params.per_page,
+            status=params.status,
+        )
 
+        pages = ceil(total / params.per_page) if total > 0 else 0
+
+        return PaginatedEventsResponse(
+            items=[EventResponse.model_validate(item) for item in items],
+            total=total,
+            page=params.page,
+            per_page=params.per_page,
+            pages=pages,
+        )
+    
     async def update(
         self, event_id: UUID, user: User, data: EventUpdate
     ) -> Event:

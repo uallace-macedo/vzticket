@@ -211,3 +211,19 @@ class EventUpdate(BaseModel):
         if v is not None:
             return v.upper()
         return v
+
+
+class MyEventsSearch(BaseModel):
+    status: Optional[EventStatus] = Field(default=None)
+    page: int = Field(ge=1, default=1, description='Número da página')
+    per_page: int = Field(
+        ge=1, le=100, default=10, description='Itens por página (máx. 100)'
+    )
+
+
+class PaginatedEventsResponse(BaseModel):
+    items: list[EventResponse]
+    total: int
+    page: int
+    per_page: int
+    pages: int

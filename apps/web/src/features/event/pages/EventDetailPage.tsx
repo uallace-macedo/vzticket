@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Loader2, ArrowLeft } from 'lucide-react';
 import { useEvent } from '../hooks/use-event';
 import { EventHero } from '../components/EventHero';
@@ -11,9 +11,10 @@ import { PAGES } from '@/constants/pages';
 
 export function EventDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const { data: event, isLoading, isError } = useEvent(id || '');
 
-  const [quantity, setQuantity] = useState(0);
+  const [quantity, setQuantity] = useState(1);
 
   if (isLoading) {
     return (
@@ -46,7 +47,10 @@ export function EventDetailPage() {
     : true;
 
   const handleCheckout = () => {
-    alert(`Redirecionando para o checkout de ${quantity} ingresso(s)...`);
+    if (quantity <= 0) return;
+    navigate(PAGES.PRIVATE.EVENTS.CHECKOUT(event.id), {
+      state: { quantity, event },
+    });
   };
 
   return (

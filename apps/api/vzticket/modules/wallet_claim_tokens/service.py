@@ -90,12 +90,21 @@ class WalletClaimTokenService:
                     user_id=target_user.id,
                     type=TransactionType.DEPOSIT,
                     amount=claim_item.amount,
-                    description='Depósito via QR Code/PIX',
+                    description='Depósito via PIX',
                 )
                 self.session.add(transaction)
 
         elif claim_item.type == ClaimType.TICKET_PURCHASE:
-            pass
+            from vzticket.modules.tickets.service import TicketService
+
+            target_user_id = user.id if user else claim_item.user_id
+            if claim_item.target_id and target_user_id:
+                ticket_service = TicketService(self.session)
+                await ticket_service.process_pix_ticket_purchase(
+                    event_id=claim_item.target_id,
+                    buyer_id=target_user_id,
+                    total_amount=claim_item.amount,
+                )
 
         elif claim_item.type == ClaimType.EVENT_FEE:
             if claim_item.target_id:
