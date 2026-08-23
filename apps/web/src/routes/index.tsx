@@ -25,7 +25,6 @@ export function AppRouter() {
 
         <Route element={<Layout showSearchInHeader={false} />}>
           <Route element={<ProtectedRoute />}>
-            <Route path={PAGES.PRIVATE.PROFILE} element={<h1>Minha Conta</h1>} />
             <Route path={PAGES.PRIVATE.TICKETS.BASE} element={<TicketsPage />} />
             <Route path={PAGES.PRIVATE.TICKETS.TICKET_BASE} element={<TicketDetailsPage />} />
             <Route path={PAGES.PRIVATE.WALLET} element={<WalletPage />} />
