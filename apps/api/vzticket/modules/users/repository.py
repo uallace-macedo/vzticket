@@ -24,6 +24,17 @@ class UserRepository:
         result = await self.session.execute(stmt)
         return result.scalar_one_or_none()
 
+    async def get_by_id_for_update(self, user_id: UUID) -> User | None:
+        """Search a user by it's id to update"""
+        stmt = (
+            select(User).where(
+                User.id == user_id
+            ).with_for_update()
+        )
+        
+        result = await self.session.execute(stmt)
+        return result.scalar_one_or_none()
+
     async def get_by_email(self, email: str) -> User | None:
         """Search a user by it's email"""
         stmt = select(User).where(User.email == email)
