@@ -72,7 +72,7 @@ export function AccountDrawer({ isOpen, onClose }: AccountDrawerProps) {
             </button>
 
             <button
-              onClick={() => handleNavigate(PAGES.PRIVATE.TICKETS)}
+              onClick={() => handleNavigate(PAGES.PRIVATE.TICKETS.BASE)}
               className="w-full flex items-center justify-between p-3.5 rounded-xl hover:bg-background transition cursor-pointer group"
             >
               <div className="flex items-center gap-3">

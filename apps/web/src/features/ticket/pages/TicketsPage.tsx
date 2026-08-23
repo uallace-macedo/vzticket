@@ -1,11 +1,14 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Loader2, Ticket as TicketIcon } from 'lucide-react';
 import { useMyTickets } from '../hooks/use-my-tickets';
 import { TicketCard } from '../components/TicketCard';
 import { TicketFilters } from '../components/TicketFilters';
 import type { TicketStatus } from '../types';
+import { PAGES } from '@/constants/pages';
 
 export function TicketsPage() {
+  const navigate = useNavigate();
   const [status, setStatus] = useState<TicketStatus | undefined>('valid');
   const [page, setPage] = useState(1);
 
@@ -50,7 +53,7 @@ export function TicketsPage() {
               key={ticket.id}
               ticket={ticket}
               onViewTicket={(t) => {
-                console.log('Ver ingresso:', t.id);
+                navigate(PAGES.PRIVATE.TICKETS.TICKET(t.id))
               }}
             />
           ))}

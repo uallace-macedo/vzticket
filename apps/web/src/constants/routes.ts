@@ -18,6 +18,7 @@ export const ROUTES = {
   },
   TICKETS: {
     PURCHASE: (event_id: string) =>  `/api/v1/tickets/events/${event_id}/purchase`,
-    MY: '/api/v1/tickets/my-tickets'
+    MY: '/api/v1/tickets/my-tickets',
+    TICKET: (ticket_id: string) => `/api/v1/tickets/${ticket_id}`
   }
 }

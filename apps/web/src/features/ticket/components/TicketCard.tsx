@@ -1,5 +1,7 @@
+import { useNavigate } from 'react-router-dom';
 import { Info, Ticket, QrCode } from 'lucide-react';
 import type { UserTicket } from '../types';
+import { PAGES } from '@/constants/pages';
 
 interface TicketCardProps {
   ticket: UserTicket;
@@ -13,6 +15,7 @@ const STATUS_MAP = {
 };
 
 export function TicketCard({ ticket, onViewTicket }: TicketCardProps) {
+  const navigate = useNavigate();
   const { event } = ticket;
 
   const media = event.media;
@@ -84,7 +87,7 @@ export function TicketCard({ ticket, onViewTicket }: TicketCardProps) {
 
       <div className="p-4 pt-0">
         <button
-          onClick={() => onViewTicket?.(ticket)}
+          onClick={() => onViewTicket ? onViewTicket(ticket) : navigate(PAGES.PRIVATE.TICKETS.TICKET(ticket.id))}
           className="w-full bg-foreground text-background font-extrabold py-3 px-4 rounded-xl hover:opacity-90 transition flex items-center justify-center gap-2 text-xs cursor-pointer"
         >
           <span>Ver Ingresso</span>
