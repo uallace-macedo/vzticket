@@ -11,6 +11,7 @@ export interface TicketEventInfo {
   title: string;
   event_date: string;
   location_name: string;
+  maps_url: string;
   city: string;
   state: string;
   ticket_title: string;

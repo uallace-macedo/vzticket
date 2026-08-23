@@ -11,7 +11,7 @@ export function AppProvider(props: AppProviderProps) {
   return (
     <QueryClientProvider client={queryClient}>
       {props.children}
-      <Toaster position="top-right" richColors />
+      <Toaster position="top-right" richColors duration={1500} />
     </QueryClientProvider>
   )
 }
