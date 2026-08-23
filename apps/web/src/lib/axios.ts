@@ -60,7 +60,7 @@ api.interceptors.response.use(
         toast.error("Sua sessão expirou. Por favor, faça login novamente.");
 
         setTimeout(() => {
-          window.location.href = PAGES.PUBLIC.EVENTS;
+          window.location.href = PAGES.PUBLIC.HOME;
         }, 1500);
         
         return Promise.reject(refreshError);
