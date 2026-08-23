@@ -1,14 +1,14 @@
+import { useState } from 'react';
 import { Share2, Ban, ChevronRight } from 'lucide-react';
 import { toast } from 'sonner';
+import { CancelTicketModal } from './CancelTicketModal';
 
 interface TicketOptionsSectionProps {
-  eventId: string;
+  ticketId: string;
 }
 
-export function TicketOptionsSection({ eventId }: TicketOptionsSectionProps) {
-  const handleCancel = () => {
-    toast.info('Funcionalidade de cancelamento em breve!');
-  };
+export function TicketOptionsSection({ ticketId }: TicketOptionsSectionProps) {
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
 
   const handleShare = () => {
     if (navigator.share) {
@@ -29,6 +29,7 @@ export function TicketOptionsSection({ eventId }: TicketOptionsSectionProps) {
 
       <div className="space-y-2.5">
         <button
+          type="button"
           onClick={handleShare}
           className="w-full flex items-center justify-between p-4 bg-background-muted border border-foreground/10 rounded-2xl hover:border-foreground/20 transition cursor-pointer group"
         >
@@ -40,7 +41,8 @@ export function TicketOptionsSection({ eventId }: TicketOptionsSectionProps) {
         </button>
 
         <button
-          onClick={handleCancel}
+          type="button"
+          onClick={() => setIsCancelModalOpen(true)}
           className="w-full flex items-center justify-between p-4 bg-background-muted border border-foreground/10 rounded-2xl hover:border-rose-500/30 transition cursor-pointer group"
         >
           <div className="flex items-center gap-3">
@@ -59,6 +61,12 @@ export function TicketOptionsSection({ eventId }: TicketOptionsSectionProps) {
           <span className="underline font-bold cursor-pointer">Saiba mais</span>
         </p>
       </div>
+
+      <CancelTicketModal
+        isOpen={isCancelModalOpen}
+        ticketId={ticketId}
+        onClose={() => setIsCancelModalOpen(false)}
+      />
     </div>
   );
 }

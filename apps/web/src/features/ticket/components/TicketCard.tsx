@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Info, Ticket, QrCode } from 'lucide-react';
+import { Ticket, QrCode } from 'lucide-react';
 import type { UserTicket } from '../types';
 import { PAGES } from '@/constants/pages';
 
@@ -56,7 +56,6 @@ export function TicketCard({ ticket, onViewTicket }: TicketCardProps) {
             </h3>
             <div className="flex items-center gap-1.5 text-xs text-foreground-muted font-medium mt-0.5">
               <span>{formattedDate}</span>
-              <Info className="w-3.5 h-3.5" />
             </div>
           </div>
 

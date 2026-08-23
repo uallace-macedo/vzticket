@@ -51,7 +51,7 @@ export function TicketDetailsPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
         <TicketDetailsSection ticket={ticket} />
-        <TicketOptionsSection eventId={ticket.event_id} />
+        <TicketOptionsSection ticketId={ticket.id} />
       </div>
     </div>
   );

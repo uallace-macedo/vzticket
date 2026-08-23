@@ -14,6 +14,9 @@ from vzticket.modules.tickets.exceptions import (
     InsufficientBalanceForTicketError,
     InsufficientTicketsError,
     TicketNotFoundError,
+    TicketRefundWindowClosedError,
+    TicketRefund7DaysExpiredError,
+    TicketAlreadyCancelledError
 )
 from vzticket.modules.tickets.schemas import (
     TicketPurchase,
@@ -91,3 +94,36 @@ async def get_ticket_by_id(
     _: CurrentUserDep,
 ):
     return await ticket_service.get_ticket_by_id(ticket_id)
+
+
+@router.patch(
+    '/{ticket_id}/cancel',
+    response_model=TicketResponse,
+    status_code=HTTPStatus.OK,
+    summary='Cancelar ingresso e solicitar reembolso',
+    responses={
+        **create_error_response(
+            TicketNotFoundError, 'Ingresso não encontrado.'
+        ),
+        **create_error_response(
+            TicketAlreadyCancelledError, 'Ingresso já cancelado ou utilizado.'
+        ),
+        **create_error_response(
+            TicketRefund7DaysExpiredError, 'Prazo legal de 7 dias expirado.'
+        ),
+        **create_error_response(
+            TicketRefundWindowClosedError, 'Prazo limite do evento expirado (< 24h).'
+        ),
+    },
+)
+async def cancel_ticket(
+    ticket_id: UUID,
+    current_user: CurrentUserDep,
+    ticket_service: TicketServiceDep,
+) -> TicketResponse:
+    cancelled_ticket = await ticket_service.cancel_ticket(
+        user_id=current_user.id,
+        ticket_id=ticket_id,
+    )
+
+    return TicketResponse.model_validate(cancelled_ticket)
