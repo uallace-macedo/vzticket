@@ -1,5 +1,5 @@
 import { AlertTriangle, Loader2 } from 'lucide-react';
-import { useCancelTicket } from '../hooks/use-cancel-ticket';
+import { useCancelTicket } from '../../hooks/use-cancel-ticket';
 
 interface CancelTicketModalProps {
   isOpen: boolean;

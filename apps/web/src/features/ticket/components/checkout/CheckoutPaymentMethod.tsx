@@ -1,5 +1,5 @@
 import { Wallet, QrCode, Loader2, AlertCircle } from 'lucide-react';
-import type { PaymentMethod } from '../types/payment-types';
+import type { PaymentMethod } from '../../types/payment-types';
 
 interface CheckoutPaymentMethodProps {
   selectedMethod: PaymentMethod;

@@ -1,5 +1,5 @@
 import { Filter } from 'lucide-react';
-import type { TicketStatus } from '../types';
+import type { TicketStatus } from '../../types';
 
 interface TicketFiltersProps {
   selectedStatus?: TicketStatus;

@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { Ticket, QrCode } from 'lucide-react';
-import type { UserTicket } from '../types';
+import type { UserTicket } from '../../types';
 import { PAGES } from '@/constants/pages';
 
 interface TicketCardProps {

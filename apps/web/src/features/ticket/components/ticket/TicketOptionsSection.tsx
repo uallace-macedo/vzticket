@@ -1,27 +1,16 @@
 import { useState } from 'react';
 import { Share2, Ban, ChevronRight } from 'lucide-react';
-import { toast } from 'sonner';
 import { CancelTicketModal } from './CancelTicketModal';
+import { ShareTicketModal } from './ShareTicketModal';
+import type { UserTicket } from '../../types';
 
 interface TicketOptionsSectionProps {
-  ticketId: string;
+  ticket: UserTicket;
 }
 
-export function TicketOptionsSection({ ticketId }: TicketOptionsSectionProps) {
+export function TicketOptionsSection({ ticket }: TicketOptionsSectionProps) {
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
-
-  const handleShare = () => {
-    if (navigator.share) {
-      navigator.share({
-        title: 'Meu Ingresso',
-        text: 'Confira meu ingresso para o evento!',
-        url: window.location.href,
-      }).catch(() => {});
-    } else {
-      navigator.clipboard.writeText(window.location.href);
-      toast.success('Link do ingresso copiado para a área de transferência!');
-    }
-  };
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
   return (
     <div className="space-y-4">
@@ -30,12 +19,12 @@ export function TicketOptionsSection({ ticketId }: TicketOptionsSectionProps) {
       <div className="space-y-2.5">
         <button
           type="button"
-          onClick={handleShare}
+          onClick={() => setIsShareModalOpen(true)}
           className="w-full flex items-center justify-between p-4 bg-background-muted border border-foreground/10 rounded-2xl hover:border-foreground/20 transition cursor-pointer group"
         >
           <div className="flex items-center gap-3">
             <Share2 className="w-5 h-5 text-foreground-muted group-hover:text-primary transition" />
-            <span className="text-xs font-extrabold text-foreground">Compartilhar Ingresso</span>
+            <span className="text-xs font-extrabold text-foreground">Compartilhar ou Baixar Ingresso</span>
           </div>
           <ChevronRight className="w-4 h-4 text-foreground-muted group-hover:translate-x-0.5 transition" />
         </button>
@@ -62,9 +51,15 @@ export function TicketOptionsSection({ ticketId }: TicketOptionsSectionProps) {
         </p>
       </div>
 
+      <ShareTicketModal
+        isOpen={isShareModalOpen}
+        ticket={ticket}
+        onClose={() => setIsShareModalOpen(false)}
+      />
+
       <CancelTicketModal
         isOpen={isCancelModalOpen}
-        ticketId={ticketId}
+        ticketId={ticket.id}
         onClose={() => setIsCancelModalOpen(false)}
       />
     </div>

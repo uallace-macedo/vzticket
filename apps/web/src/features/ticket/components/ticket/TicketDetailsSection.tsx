@@ -1,6 +1,6 @@
 import { Ticket, Calendar, ExternalLink } from 'lucide-react';
 import { useAuthStore } from '@/features/auth/store/use-auth-store';
-import type { UserTicket } from '../types';
+import type { UserTicket } from '../../types';
 
 interface TicketDetailsSectionProps {
   ticket: UserTicket;

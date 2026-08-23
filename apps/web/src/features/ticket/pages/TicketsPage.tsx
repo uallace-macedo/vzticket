@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Loader2, Ticket as TicketIcon } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { ArrowLeft, Loader2, Ticket as TicketIcon } from 'lucide-react';
 import { useMyTickets } from '../hooks/use-my-tickets';
-import { TicketCard } from '../components/TicketCard';
-import { TicketFilters } from '../components/TicketFilters';
+import { TicketCard } from '../components/ticket/TicketCard';
+import { TicketFilters } from '../components/ticket/TicketFilters';
 import type { TicketStatus } from '../types';
 import { PAGES } from '@/constants/pages';
 
@@ -22,6 +22,14 @@ export function TicketsPage() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6 sm:py-8 space-y-6">
+      <Link
+        to={PAGES.PUBLIC.EVENTS}
+        className="inline-flex items-center gap-2 text-xs font-bold text-foreground-muted hover:text-foreground transition"
+      >
+        <ArrowLeft className="w-4 h-4" />
+        <span>Voltar</span>
+      </Link>
+
       <div className="flex items-center gap-2 pb-4">
         <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
           MEUS INGRESSOS
