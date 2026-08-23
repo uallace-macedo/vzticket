@@ -60,3 +60,27 @@ class TicketNotFoundError(AppError):
 
     def __init__(self, message: str = 'Ingresso não encontrado.') -> None:
         super().__init__(message)
+
+
+class TicketAlreadyCancelledError(AppError):
+    status_code: int = HTTPStatus.BAD_REQUEST
+    code: str = 'TICKET_ALREADY_CANCELLED'
+
+    def __init__(self, message: str = 'Este ingresso já foi cancelado ou utilizado.') -> None:
+        super().__init__(message)
+
+
+class TicketRefund7DaysExpiredError(AppError):
+    status_code: int = HTTPStatus.BAD_REQUEST
+    code: str = 'TICKET_REFUND_7_DAYS_EXPIRED'
+
+    def __init__(self, message: str = 'O prazo legal de 7 dias para cancelamento do ingresso expirou.') -> None:
+        super().__init__(message)
+
+
+class TicketRefundWindowClosedError(AppError):
+    status_code: int = HTTPStatus.BAD_REQUEST
+    code: str = 'TICKET_REFUND_WINDOW_CLOSED'
+
+    def __init__(self, message: str = 'Solicitações de reembolso não são permitidas com menos de 24h para o início do evento.') -> None:
+        super().__init__(message)

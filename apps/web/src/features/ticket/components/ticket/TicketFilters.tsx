@@ -1,5 +1,5 @@
 import { Filter } from 'lucide-react';
-import type { TicketStatus } from '../types';
+import type { TicketStatus } from '../../types';
 
 interface TicketFiltersProps {
   selectedStatus?: TicketStatus;
@@ -15,7 +15,6 @@ export function TicketFilters({ selectedStatus, onSelectStatus }: TicketFiltersP
           onChange={(e) => onSelectStatus(e.target.value ? (e.target.value as TicketStatus) : undefined)}
           className="bg-background-muted border border-foreground/10 px-4 py-2 rounded-full text-xs font-bold text-foreground outline-none focus:border-primary transition cursor-pointer appearance-none pr-8 flex items-center gap-2"
         >
-          <option value="">Disponíveis e Todos</option>
           <option value="valid">Disponíveis</option>
           <option value="used">Utilizados</option>
           <option value="canceled">Cancelados</option>

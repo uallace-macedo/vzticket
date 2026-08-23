@@ -1,9 +1,10 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import { useTicketDetails } from '../hooks/use-ticket-details';
-import { TicketQrCodeCard } from '../components/TicketQrCodeCard';
-import { TicketDetailsSection } from '../components/TicketDetailsSection';
-import { TicketOptionsSection } from '../components/TicketOptionsSection';
+import { TicketQrCodeCard } from '../components/ticket/TicketQrCodeCard';
+import { TicketDetailsSection } from '../components/ticket/TicketDetailsSection';
+import { TicketOptionsSection } from '../components/ticket/TicketOptionsSection';
+import { PAGES } from '@/constants/pages';
 
 export function TicketDetailsPage() {
   const { ticket_id } = useParams<{ ticket_id: string }>();
@@ -26,13 +27,13 @@ export function TicketDetailsPage() {
         <p className="text-xs text-foreground-muted">
           Não foi possível carregar as informações deste ingresso.
         </p>
-        <button
-          onClick={() => navigate(-1)}
-          className="inline-flex items-center gap-2 bg-primary text-white font-bold text-xs px-4 py-2 rounded-full cursor-pointer hover:opacity-90 transition"
+        <Link
+          to={PAGES.PRIVATE.TICKETS.BASE}
+          className="inline-flex items-center gap-2 text-xs font-bold text-foreground-muted hover:text-foreground transition"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Voltar</span>
-        </button>
+        </Link>
       </div>
     );
   }
@@ -51,7 +52,7 @@ export function TicketDetailsPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
         <TicketDetailsSection ticket={ticket} />
-        <TicketOptionsSection eventId={ticket.event_id} />
+        <TicketOptionsSection ticket={ticket} />
       </div>
     </div>
   );

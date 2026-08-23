@@ -1,11 +1,13 @@
 from math import ceil
 from uuid import UUID
+from typing import Optional
 
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 
 from vzticket.modules.tickets.model import Ticket
+from vzticket.modules.events.model import Event
 from vzticket.modules.tickets.schemas import TicketSearch
 
 
@@ -58,3 +60,18 @@ class TicketRepository:
         tickets = result.scalars().all()
 
         return list(tickets), total, pages
+
+    async def get_by_id_and_user_for_update(
+        self, ticket_id: UUID, user_id: UUID
+    ) -> Optional[Ticket]:
+        stmt = (
+            select(Ticket)
+            .options(
+                joinedload(Ticket.event, innerjoin=True).joinedload(Event.organizer, innerjoin=True),
+                joinedload(Ticket.user, innerjoin=True),
+            )
+            .where(Ticket.id == ticket_id, Ticket.user_id == user_id)
+            .with_for_update()
+        )
+        result = await self.session.execute(stmt)
+        return result.scalar_one_or_none()

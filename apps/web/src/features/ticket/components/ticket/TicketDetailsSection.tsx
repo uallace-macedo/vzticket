@@ -1,6 +1,6 @@
 import { Ticket, Calendar, ExternalLink } from 'lucide-react';
 import { useAuthStore } from '@/features/auth/store/use-auth-store';
-import type { UserTicket } from '../types';
+import type { UserTicket } from '../../types';
 
 interface TicketDetailsSectionProps {
   ticket: UserTicket;
@@ -56,25 +56,32 @@ export function TicketDetailsSection({ ticket }: TicketDetailsSectionProps) {
       </div>
 
       <div className="bg-background-muted border border-foreground/10 rounded-2xl overflow-hidden divide-y divide-foreground/5">
-        <div className="p-4 flex items-center gap-3 bg-foreground/[0.02]">
-          <Calendar className="w-4 h-4 text-foreground-muted shrink-0" />
-          <span className="text-xs font-semibold text-foreground-muted">
-            Este ingresso pode ser válido para dias específicos do evento
-          </span>
-        </div>
 
         <div className="p-4 space-y-3 text-xs">
-          <div className="flex justify-between items-center gap-4">
-            <span className="font-bold text-foreground-muted">Evento</span>
-            <span className="font-extrabold text-foreground text-right">{event.title}</span>
+          <div className="flex justify-between items-start gap-4">
+            <span className="font-bold text-foreground-muted shrink-0">Evento</span>
+            <span
+              title={event.title}
+              className="font-extrabold text-foreground text-right line-clamp-1 min-w-0"
+            >
+              {event.title}
+            </span>
           </div>
 
-          <div className="flex justify-between items-center gap-4">
-            <span className="font-bold text-foreground-muted">Endereço</span>
-            <span className="font-extrabold text-foreground text-right inline-flex items-center gap-1">
-              {event.location_name}, {event.city} - {event.state}
-              <ExternalLink className="w-3 h-3 text-foreground-muted" />
-            </span>
+          <div className="flex justify-between items-start gap-4">
+            <span className="font-bold text-foreground-muted shrink-0">Endereço</span>
+            <a
+              href={event.maps_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-primary transition font-extrabold text-foreground text-right inline-flex items-start gap-1 cursor-pointer min-w-0"
+              title={`${event.location_name}, ${event.city} - ${event.state}`}
+            >
+              <span className="line-clamp-1 underline min-w-0">
+                {event.location_name}, {event.city} - {event.state}
+              </span>
+              <ExternalLink className="w-3 h-3 text-foreground-muted shrink-0 mt-0.5" />
+            </a>
           </div>
 
           <div className="flex justify-between items-center gap-4">

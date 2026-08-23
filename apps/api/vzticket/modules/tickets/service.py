@@ -15,6 +15,9 @@ from vzticket.modules.tickets.exceptions import (
     InsufficientBalanceForTicketError,
     InsufficientTicketsError,
     TicketNotFoundError,
+    TicketAlreadyCancelledError,
+    TicketRefund7DaysExpiredError,
+    TicketRefundWindowClosedError
 )
 from vzticket.modules.tickets.model import Ticket, TicketStatus
 from vzticket.modules.tickets.repository import TicketRepository
@@ -203,4 +206,62 @@ class TicketService:
         ticket = await self.ticket_repository.get_by_id(ticket_id)
         if not ticket:
             raise TicketNotFoundError()
+        return ticket
+
+    async def cancel_ticket(
+        self,
+        user_id: uuid.UUID,
+        ticket_id: uuid.UUID
+    ) -> Ticket:
+        ticket = await self.ticket_repository.get_by_id_and_user_for_update(
+            ticket_id, user_id
+        )
+        
+        if not ticket:
+            raise TicketNotFoundError()
+
+        if ticket.status != TicketStatus.VALID:
+            raise TicketAlreadyCancelledError()
+
+        event = ticket.event
+        buyer = ticket.user
+        organizer = event.organizer
+
+        now = datetime.now(timezone.utc)
+        purchased_at = ticket.purchased_at.replace(tzinfo=timezone.utc) if ticket.purchased_at.tzinfo is None else ticket.purchased_at
+        event_date = event.event_date.replace(tzinfo=timezone.utc) if event.event_date.tzinfo is None else event.event_date
+
+        if (now - purchased_at).days >= 7:
+            raise TicketRefund7DaysExpiredError()
+
+        hours_until_event = (event_date - now).total_seconds() / 3600
+        if hours_until_event < 24:
+            raise TicketRefundWindowClosedError()
+
+        base_refund = event.ticket_price + event.service_fee
+        rate = Decimal('0.80') if hours_until_event < 48 else Decimal('1.00')
+
+        refund_amount = base_refund * rate
+        organizer_deduction = event.ticket_price * rate
+
+        ticket.status = TicketStatus.CANCELLED
+        event.available_tickets += 1
+
+        buyer.balance += refund_amount
+
+        if organizer:
+            organizer.pending_balance = max(Decimal('0.00'), organizer.pending_balance - organizer_deduction)
+
+        self.session.add(
+            WalletTransaction(
+                user_id=user_id,
+                event_id=event.id,
+                ticket_id=ticket.id,
+                type=TransactionType.TICKET_REFUND,
+                amount=refund_amount,
+                description=f'Reembolso do ingresso para o evento: {event.title}',
+            )
+        )
+
+        await self.session.commit()
         return ticket

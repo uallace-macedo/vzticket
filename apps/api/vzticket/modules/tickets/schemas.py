@@ -39,12 +39,12 @@ class TicketEventResponse(BaseModel):
     title: str
     event_date: datetime
     location_name: str
+    maps_url: str
     city: str
     state: str
     ticket_title: str
     ticket_description: Optional[str] = None
 
-    # Mapeados do Event da ORM, mas ocultados do JSON principal para ir apenas no 'media'
     poster_url: Optional[str] = Field(default=None, exclude=True)
     banner_url: Optional[str] = Field(default=None, exclude=True)
     custom_image_url: Optional[str] = Field(default=None, exclude=True)
