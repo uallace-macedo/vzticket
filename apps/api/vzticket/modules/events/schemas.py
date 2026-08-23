@@ -214,6 +214,7 @@ class EventUpdate(BaseModel):
 
 
 class MyEventsSearch(BaseModel):
+    title: Optional[str] = Field(default=None)
     status: Optional[EventStatus] = Field(default=None)
     page: int = Field(ge=1, default=1, description='Número da página')
     per_page: int = Field(

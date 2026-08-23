@@ -136,6 +136,7 @@ class EventService:
     ) -> PaginatedEventsResponse:
         items, total = await self.event_repository.get_by_organizer_id(
             organizer_id=organizer_id,
+            title=params.title,
             page=params.page,
             per_page=params.per_page,
             status=params.status,
