@@ -2,7 +2,8 @@ export const PAGES = {
   PUBLIC: {
     HOME: '/',
     EVENTS: '/events',
-    EVENT: '/events/:id'
+    EVENT: '/events/:id',
+    SHARED_TICKET: '/'
   },
   PRIVATE: {
     PROFILE: '/profile',
