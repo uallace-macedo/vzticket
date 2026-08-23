@@ -17,11 +17,14 @@ export function TicketQrCodeCard({ qrCodeHash }: TicketQrCodeCardProps) {
         />
       </div>
 
-      <div className="space-y-1 pt-2">
+      <div className="space-y-1 pt-2 w-full">
         <h2 className="text-base font-black text-foreground tracking-tight">
           SEU INGRESSO
         </h2>
-        <p className="text-xs text-foreground-muted font-medium max-w-[220px]">
+        <p className="text-[10px] font-mono text-foreground-muted font-bold break-all max-w-xs mx-auto">
+          {qrCodeHash}
+        </p>
+        <p className="text-xs text-foreground-muted font-medium max-w-[220px] mx-auto pt-1">
           Mostre este QR Code na entrada e aproveite o evento!
         </p>
       </div>

@@ -3,17 +3,17 @@ import { useAuthStore } from '@/features/auth/store/use-auth-store';
 import { PAGES } from '@/constants/pages';
 
 interface ProtectedRouteProps {
-  requiredRole?: string;
+  allowedRoles?: string[];
 }
 
-export function ProtectedRoute({ requiredRole }: ProtectedRouteProps) {
+export function ProtectedRoute({ allowedRoles }: ProtectedRouteProps) {
   const { user } = useAuthStore();
 
   if (!user) {
     return <Navigate to={PAGES.PUBLIC.HOME} replace />;
   }
 
-  if (requiredRole && user.role !== requiredRole) {
+  if (allowedRoles && !allowedRoles.includes(user.role)) {
     return <Navigate to={PAGES.PUBLIC.HOME} replace />;
   }
 

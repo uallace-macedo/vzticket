@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Ticket, User, LogOut, ChevronRight, Wallet, Calendar } from 'lucide-react';
+import { Ticket, User, LogOut, ChevronRight, Wallet, Calendar, ScanLine } from 'lucide-react';
 import { PAGES } from '@/constants/pages';
 import { useAuth } from '@/features/auth/hooks/use-auth';
 import { useAuthStore } from '@/features/auth/store/use-auth-store';
@@ -12,6 +12,7 @@ interface AccountDrawerProps {
 export function AccountDrawer({ isOpen, onClose }: AccountDrawerProps) {
   const { user } = useAuthStore();
   const isOrganizer = user?.role === 'organizer';
+  const isGatekeeper = user?.role === 'gatekeeper';
   
   const navigate = useNavigate();
   const { logout } = useAuth();
@@ -94,6 +95,19 @@ export function AccountDrawer({ isOpen, onClose }: AccountDrawerProps) {
                 <ChevronRight className="w-4 h-4 text-foreground-muted group-hover:translate-x-0.5 transition" />
               </button>
             )}
+
+            {(isOrganizer || isGatekeeper) && (
+              <button
+                onClick={() => handleNavigate(PAGES.PRIVATE.CHECKIN.BASE)}
+                className="w-full flex items-center justify-between p-3.5 rounded-xl hover:bg-background transition cursor-pointer group"
+              >
+                <div className="flex items-center gap-3">
+                  <ScanLine className="w-5 h-5 text-foreground-muted group-hover:text-primary transition" />
+                  <span className="text-sm font-bold text-foreground">Portaria / Check-in</span>
+                </div>
+                <ChevronRight className="w-4 h-4 text-foreground-muted group-hover:translate-x-0.5 transition" />
+              </button>
+            )}
           </div>
         </div>
 
@@ -109,8 +123,6 @@ export function AccountDrawer({ isOpen, onClose }: AccountDrawerProps) {
             <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition" />
           </button>
         </div>
-
-        
       </div>
     </div>
   )

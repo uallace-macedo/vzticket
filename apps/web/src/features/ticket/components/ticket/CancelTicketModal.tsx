@@ -26,7 +26,6 @@ export function CancelTicketModal({ isOpen, ticketId, onClose }: CancelTicketMod
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
       <div className="bg-background border border-foreground/10 rounded-3xl max-w-md w-full p-6 space-y-6 shadow-xl animate-in zoom-in-95 duration-200">
-        {/* Header */}
         <div className="flex items-center gap-3">
           <div className="p-3 bg-rose-500/10 text-rose-500 rounded-2xl">
             <AlertTriangle className="w-6 h-6" />

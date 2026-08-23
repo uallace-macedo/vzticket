@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Loader2, ArrowLeft } from 'lucide-react';
+import { toast } from 'sonner';
+import { useAuthStore } from '@/features/auth/store/use-auth-store';
 import { useEvent } from '../hooks/use-event';
 import { EventHero } from '../components/EventHero';
 import { EventDetails } from '../components/EventDetails';
@@ -12,6 +14,7 @@ import { PAGES } from '@/constants/pages';
 export function EventDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user, openAuthModal } = useAuthStore();
   const { data: event, isLoading, isError } = useEvent(id || '');
 
   const [quantity, setQuantity] = useState(1);
@@ -48,6 +51,13 @@ export function EventDetailPage() {
 
   const handleCheckout = () => {
     if (quantity <= 0) return;
+
+    if (!user) {
+      toast.info('Você precisa estar logado para comprar um ingresso.');
+      openAuthModal();
+      return;
+    }
+
     navigate(PAGES.PRIVATE.EVENTS.CHECKOUT(event.id), {
       state: { quantity, event },
     });

@@ -5,21 +5,21 @@ import { getOrganizerEvents } from '../services/organizer-services';
 
 export function useOrganizerEvents() {
   const [page, setPage] = useState(1);
-  const [search, setSearch] = useState('');
+  const [title, setTitle] = useState('');
 
-  const debouncedSearch = useDebounce(search, 500);
+  const debouncedSearch = useDebounce(title, 500);
   const handleSearchChange = (value: string) => {
-    setSearch(value);
+    setTitle(value);
     setPage(1);
   };
 
   const eventsQuery = useQuery({
-    queryKey: ['organizer-events', { page, search: debouncedSearch }],
+    queryKey: ['organizer-events', { page, title: debouncedSearch }],
     queryFn: () =>
       getOrganizerEvents({
         page,
         per_page: 5,
-        search: debouncedSearch || undefined,
+        title: debouncedSearch || undefined,
       }),
   });
 
@@ -33,7 +33,7 @@ export function useOrganizerEvents() {
     refetch: eventsQuery.refetch,
     page,
     setPage,
-    search,
-    setSearch: handleSearchChange,
+    title,
+    setTitle: handleSearchChange,
   };
 }

@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import { ShieldAlert, Download, Loader2, X, CheckCircle2 } from 'lucide-react';
 import { toPng } from 'html-to-image';
 import { toast } from 'sonner';
+import QRCode from 'react-qr-code';
 import type { UserTicket } from '../../types';
 
 interface ShareTicketModalProps {
@@ -51,7 +52,6 @@ export function ShareTicketModal({ isOpen, ticket, onClose }: ShareTicketModalPr
       toast.success('Ingresso baixado com sucesso!');
       onClose();
     } catch (error) {
-      console.error('Erro ao gerar imagem do ingresso:', error);
       toast.error('Não foi possível gerar a imagem do ingresso.');
     } finally {
       setIsGenerating(false);
@@ -92,18 +92,20 @@ export function ShareTicketModal({ isOpen, ticket, onClose }: ShareTicketModalPr
               </h4>
             </div>
 
-            <div className="p-3 bg-white rounded-xl shadow-inner border border-gray-100">
-              <img
-                src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(
-                  ticket.qr_code_hash
-                )}`}
-                alt="QR Code do Ingresso"
-                className="w-36 h-36 object-contain"
+            <div className="p-3 bg-white rounded-xl shadow-inner border border-gray-100 flex items-center justify-center">
+              <QRCode
+                value={ticket.qr_code_hash}
+                size={144}
+                bgColor="#FFFFFF"
+                fgColor="#000000"
+                level="H"
               />
             </div>
 
-            <div className="space-y-0.5 text-xs">
-              <p className="font-bold text-foreground">Cód: {ticket.qr_code_hash.slice(0, 12)}...</p>
+            <div className="space-y-1 text-xs w-full">
+              <p className="font-bold text-foreground break-all text-[10px]">
+                {ticket.qr_code_hash}
+              </p>
               <div className="flex items-center justify-center gap-1 text-[11px] text-emerald-500 font-semibold">
                 <CheckCircle2 className="w-3.5 h-3.5" />
                 <span>Válido</span>
