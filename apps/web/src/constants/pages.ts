@@ -20,5 +20,10 @@ export const PAGES = {
       CHECKOUT: (event_id: string) => `/events/${event_id}/checkout`,
       CHECKOUT_BASE: '/events/:event_id/checkout'
     },
+    CHECKIN: {
+      BASE: '/check-in',
+      SCANNER_BASE: '/check-in/:event_id',
+      SCANNER: (event_id: string) => `/check-in/${event_id}`
+    }
   }
 }

@@ -53,6 +53,7 @@ class EventRepository:
     async def get_by_organizer_id(
         self, 
         organizer_id: UUID, 
+        title: str = None,
         page: int = 1, 
         per_page: int = 10,
         status: Optional[EventStatus] = None
@@ -61,6 +62,9 @@ class EventRepository:
         
         if status:
             base_stmt = base_stmt.where(Event.status == status)
+
+        if title:
+            base_stmt = base_stmt.where(Event.title.ilike(f'%{title}%'))
 
         count_stmt = select(func.count()).select_from(base_stmt.subquery())
         total_result = await self.session.execute(count_stmt)

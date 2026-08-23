@@ -131,5 +131,5 @@ export interface PaginatedEventsResponse {
 export interface GetOrganizerEventsParams {
   page?: number;
   per_page?: number;
-  search?: string;
+  title?: string;
 }
