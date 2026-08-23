@@ -1,6 +1,6 @@
 import { api } from '@/lib/axios';
 import { ROUTES } from '@/constants/routes';
-import type { PurchaseTicketInput, PurchaseTicketResponse } from '../types';
+import type { PurchaseTicketInput, PurchaseTicketResponse } from '../types/payment-types';
 
 export async function purchaseTickets(
   eventId: string,

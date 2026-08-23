@@ -2,7 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { api } from '@/lib/axios';
 import { ROUTES } from '@/constants/routes';
-import type { PaymentMethod } from '../types';
+import type { PaymentMethod } from '../types/payment-types';
 
 interface PurchasePayload {
   quantity: number;

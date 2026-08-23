@@ -8,7 +8,7 @@ import { usePurchaseTicket } from '../hooks/use-purchase-ticket';
 import { CheckoutEventSummary } from '../components/CheckoutEventSummary';
 import { CheckoutPaymentMethod } from '../components/CheckoutPaymentMethod';
 import { PixPaymentModal } from '../components/PixPaymentModal';
-import type { PaymentMethod } from '../types';
+import type { PaymentMethod } from '../types/payment-types';
 import type { Event } from '@/features/event/types';
 
 export function CheckoutPage() {

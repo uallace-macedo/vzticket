@@ -17,6 +17,7 @@ export const ROUTES = {
     CLAIMS: '/api/v1/wallet/claims'
   },
   TICKETS: {
-    PURCHASE: (event_id: string) =>  `/api/v1/tickets/events/${event_id}/purchase`
+    PURCHASE: (event_id: string) =>  `/api/v1/tickets/events/${event_id}/purchase`,
+    MY: '/api/v1/tickets/my-tickets'
   }
 }

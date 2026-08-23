@@ -1,28 +1,45 @@
-export type PaymentMethod = 'balance' | 'pix';
+export type TicketStatus = 'valid' | 'used' | 'canceled';
 
-export interface PurchaseTicketInput {
-  quantity: number;
-  payment_method: PaymentMethod;
+export interface EventMedia {
+  poster_url?: string | null;
+  banner_url?: string | null;
+  custom_image_url?: string | null;
 }
 
-export interface PurchasedTicket {
+export interface TicketEventInfo {
+  id: string;
+  title: string;
+  event_date: string;
+  location_name: string;
+  city: string;
+  state: string;
+  ticket_title: string;
+  ticket_description?: string | null;
+  media: EventMedia;
+}
+
+export interface UserTicket {
   id: string;
   event_id: string;
   user_id: string;
   qr_code_hash: string;
   share_token: string;
-  status: 'valid' | 'used' | 'cancelled';
+  status: TicketStatus;
   purchased_at: string;
-  validated_at: string | null;
+  validated_at?: string | null;
+  event: TicketEventInfo;
 }
 
-export interface PurchaseTicketResponse {
-  tickets: PurchasedTicket[];
-  payment_method: PaymentMethod;
-  payment_token: string | null;
+export interface TicketFilters {
+  status?: TicketStatus;
+  page?: number;
+  per_page?: number;
 }
 
-export interface PurchaseTicketError {
-  code: 'INSUFFICIENT_TICKETS' | 'INSUFFICIENT_BALANCE_FOR_TICKET' | 'EVENT_NOT_FOUND' | string;
-  detail: string;
+export interface PaginatedTicketsResponse {
+  items: UserTicket[];
+  total: number;
+  page: number;
+  per_page: number;
+  pages: number;
 }
