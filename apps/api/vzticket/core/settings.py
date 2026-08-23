@@ -16,14 +16,16 @@ class Settings(BaseSettings):
 
     JWT_SECRET_KEY: str = ''
     JWT_ALGORITHM: str = ''
-    JWT_TOKEN_EXP_MINUTES: int = 40
+    JWT_TOKEN_EXP_MINUTES: int = 15
 
     AUTH_COOKIE_NAME: str = ''
-    WALLET_CLAIM_EXP_MINUTES: int = 15
+    REFRESH_COOKIE_NAME: str = ''
+    REFRESH_TOKEN_EXP_DAYS: int = 7
 
     TICKET_FEE_FIXED: float = 1.50
     TICKET_FEE_PERCENTAGE: float = 0.06
     EVENT_CREATION_FEE_PERCENTAGE: float = 0.18
+    WALLET_CLAIM_EXP_MINUTES: int = 15
 
     WEB_URL: str = ''
     API_URL: str = ''
@@ -39,6 +41,10 @@ class Settings(BaseSettings):
     @property
     def AUTH_COOKIE_MAX_AGE(self) -> int:
         return self.JWT_TOKEN_EXP_MINUTES * 60
+
+    @property
+    def REFRESH_COOKIE_MAX_AGE(self) -> int:
+        return self.REFRESH_TOKEN_EXP_DAYS * 24 * 60 * 60
 
     @property
     def IS_SECURE_COOKIE(self) -> bool:
