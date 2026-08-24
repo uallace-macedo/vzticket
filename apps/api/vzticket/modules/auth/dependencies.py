@@ -20,38 +20,33 @@ def get_auth_service(session: SessionDep) -> AuthService:
 
 async def get_token_from_cookie(
     req: Request
-) -> str:
-    """Gets HTTPOnly Cookie token"""
-    token = req.cookies.get(settings.AUTH_COOKIE_NAME)
-
-    if not token:
-        raise MissingTokenError()
-
-    return token
-
-
-async def get_current_user(
-    session: SessionDep,
-    token: Annotated[str, Depends(get_token_from_cookie)],
-    _: Annotated[str | None, Depends(oauth2_scheme)] = None
-) -> User:
-    """Decodes the token and returns logged user"""
-    payload = decode_access_token(token)
-    user_service = UserService(session)
-    return await user_service.get_user_by_id(payload.sub)
+) -> str | None:
+    return req.cookies.get(settings.AUTH_COOKIE_NAME)
 
 
 async def get_optional_current_user(
     session: SessionDep,
-    token: Annotated[str, Depends(get_token_from_cookie)],
-    auth_schema: Annotated[str | None, Depends(oauth2_scheme)] = None
+    token: Annotated[str | None, Depends(get_token_from_cookie)],
+    _: Annotated[str | None, Depends(oauth2_scheme)] = None
 ) -> Optional[User]:
+    if not token:
+        return None
+
     try:
-        return await get_current_user(
-            session, token, auth_schema
-        )
+        payload = decode_access_token(token)
+        user_service = UserService(session)
+        return await user_service.get_user_by_id(payload.sub)
     except Exception:
         return None
+
+
+async def get_current_user(
+    user: Annotated[Optional[User], Depends(get_optional_current_user)]
+) -> User:
+    if not user:
+        raise MissingTokenError()
+    
+    return user
 
 
 AuthServiceDep = Annotated[AuthService, Depends(get_auth_service)]
