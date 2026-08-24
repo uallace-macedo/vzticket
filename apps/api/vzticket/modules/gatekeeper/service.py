@@ -1,5 +1,6 @@
 from datetime import datetime, timezone
 from uuid import UUID
+from zoneinfo import ZoneInfo
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -17,6 +18,8 @@ from vzticket.modules.tickets.exceptions import (
     TicketNotFoundError,
 )
 from vzticket.modules.tickets.model import TicketStatus
+
+LOCAL_TZ = ZoneInfo('America/Sao_Paulo')
 
 
 class GatekeeperService:
@@ -42,7 +45,7 @@ class GatekeeperService:
 
         if ticket.validated_at is not None or ticket.status == TicketStatus.USED:
             formatted_time = (
-                ticket.validated_at.strftime('%H:%M:%S')
+                ticket.validated_at.astimezone(LOCAL_TZ).strftime('%H:%M:%S')
                 if ticket.validated_at
                 else ''
             )
@@ -53,13 +56,21 @@ class GatekeeperService:
             )
             raise TicketAlreadyUsedError(message=msg)
 
-        now = datetime.now(timezone.utc)
-        event_date = ticket.event.event_date.replace(tzinfo=timezone.utc) if ticket.event.event_date.tzinfo is None else ticket.event.event_date
+        now_utc = datetime.now(timezone.utc)
+        today_local = now_utc.astimezone(LOCAL_TZ).date()
 
-        if now.date() < event_date.date():
-            raise TicketNotForThisEventError(message='A portaria para este evento ainda não está aberta!')
+        event_dt = ticket.event.event_date
+        if event_dt.tzinfo is None:
+            event_dt = event_dt.replace(tzinfo=timezone.utc)
 
-        ticket.validated_at = now
+        event_date_local = event_dt.astimezone(LOCAL_TZ).date()
+
+        if today_local < event_date_local:
+            raise TicketNotForThisEventError(
+                message='A portaria para este evento ainda não está aberta!'
+            )
+
+        ticket.validated_at = now_utc
         ticket.status = TicketStatus.USED
 
         await self.repository.save(ticket)
@@ -70,5 +81,5 @@ class GatekeeperService:
             buyer_name=ticket.user.name,
             buyer_email=ticket.user.email,
             status=ticket.status.value,
-            validated_at=now,
+            validated_at=now_utc,
         )
