@@ -1,39 +1,69 @@
-# Regras de Negócio e Taxas da Plataforma (vzticket)
+# Regras de Negócio e Monetização
 
-## 1. Modelo de Taxas e Tarifas
+## 1. Carteira Digital e Cobranças (PIX)
 
-A plataforma opera com duas categorias distintas de taxas de serviço:
+A aplicação não utiliza gateways externos. O ciclo financeiro é realizado via simulação orquestrada no banco de dados.
 
-### 1.1. Taxa de Publicação de Evento (Organizador)
-Cobrada do organizador no momento da criação/publicação do evento.
-* **Cálculo:** `EVENT_CREATION_FEE_PERCENTAGE` (ex: 5% ou 8% sobre o preço base do ingresso).
-* **Formas de Pagamento:**
-  * **Saldo (`BALANCE`):** O valor é debitado imediatamente do `balance` do organizador. O evento nasce com status `ACTIVE`.
-  * **PIX:** Gera um token na tabela `WALLET_CLAIM_TOKENS` (`ClaimType.EVENT_FEE`). O evento nasce com status `PENDING_FEE` até a confirmação do pagamento.
-
-### 1.2. Taxa de Emissão de Ingresso (Modelo Híbrido - Cliente)
-Cobrada por cada ingresso vendido durante o checkout do comprador/cliente.
-* **Fórmula (Modelo 2):**
-  $$\text{Taxa do Ingresso} = \text{TICKET\_FEE\_FIXED} + (\text{Preço do Ingresso} \times \text{TICKET\_FEE\_PERCENTAGE})$$
-* **Exemplo de Configuração Padrão (`.env`):**
-  * `TICKET_FEE_FIXED`: R$ 1.50
-  * `TICKET_FEE_PERCENTAGE`: 6% (0.06)
+* **Depósitos PIX:** Geram um registro na tabela `WALLET_CLAIM_TOKENS` com validade de 15 minutos.
+* **Pendências:** Caso o modal de cobrança seja fechado, a cobrança fica visível em `Carteira > Pendências` para reabertura do QR Code ou link antes do tempo de expiração.
+* **Confirmação:** A chamada ao endpoint do PIX simula a liquidação, alterando o status do token para `CLAIMED` e incrementando o `balance` do usuário.
 
 ---
 
-## 2. Ciclo de Vida do Evento (`EventStatus`)
+## 2. Estrutura de Taxas
 
-| Status | Descrição |
-| :--- | :--- |
-| `PENDING_FEE` | Evento criado via PIX, aguardando liquidação da taxa de publicação. Não visível no catálogo. |
-| `ACTIVE` | Evento publicado, com taxa paga e ingressos disponíveis para compra no catálogo. |
-| `CANCELLED` | Evento cancelado pelo organizador ou sistema. Ingressos são estornados (`TICKET_REFUND`). |
-| `FINISHED` | Data do evento ultrapassada (`event_date < now()`). Ingressos não podem mais ser validados na portaria. |
+### 2.1. Taxa de Criação de Evento (Organizador)
+* **Valor:** 5% sobre o preço do ingresso (`ticket_price`).
+* **Regra:** Para criar o evento, o valor de 5% é debitado da carteira do organizador.
+* *Exemplo:* Se o ingresso custa R$ 15,00, a taxa de criação do evento é de R$ 0,75.
+
+### 2.2. Taxa de Emissão de Ingresso (Cliente Final)
+* **Fórmula:** `R$ 1.50 + (Preço do Ingresso * 6%)`
+* *Exemplo:* Para um ingresso de R$ 15,00:
+  $$\text{Taxa} = 1.50 + (15.00 \times 0.06) = 1.50 + 0.90 = \text{R\$ } 2.40$$
+  $$\text{Valor Total Pago pelo Cliente} = 15.00 + 2.40 = \text{R\$ } 17.40$$
 
 ---
 
-## 3. Formatação e Higienização de Dados
+## 3. Política de Reembolso e Cancelamento de Ingressos
 
-* **CEP:** Deve ser sanitizado na entrada para salvar apenas números na coluna `cep` (`VARCHAR(9)`). Hífens e pontos são removidos via validator Pydantic (`re.sub(r'\D', '', v)`).
-* **Campos Opcionais de Mídia:** `poster_url`, `banner_url` e `custom_image_url` aceitam caminhos relativos de mídia ou URLs completas.
-* 
+O cancelamento pelo cliente pode ser realizado na aba `Meus Ingressos`:
+
+| Prazo do Cancelamento | Percentual do Reembolso ao Cliente | Retenção / Distribuição da Taxa |
+| :--- | :--- | :--- |
+| **Até 7 dias após a compra** | 100% do valor retoma para a carteira | Sem retenção de taxa |
+| **Entre 48h e 24h antes do evento** | 80% do valor retoma para a carteira | Taxa de 20%: 80% repassado ao organizador e 20% mantido pela plataforma |
+| **A menos de 24h do evento** | Não é permitido o cancelamento | - |
+
+---
+
+## 4. Criação e Dados do Evento
+
+* **Localização (Obrigatório):** Sanitização do CEP (salvando apenas números) + envio de URL válida do **Google Maps**.
+* **Origem dos Dados:**
+  * **TMDB:** Dados e mídias (`poster_url` e `banner_url`) buscados diretamente da API.
+  * **Custom:** Requer o preenchimento manual e o envio obrigatório do parâmetro `custom_image_url`.
+* **Janela de Vendas:** A compra de ingressos só fica disponível entre as datas de `sales_start_at` e `sales_end_at`.
+
+---
+
+## 5. Validação de Ingressos (Portaria)
+
+* **Janela de Permissão:** A validação só é liberada **no dia do evento** (`event_date`), em qualquer horário.
+* **Escopo por Perfil:**
+  * **Portaria (`GATEKEEPER`):** Pode validar ingressos de qualquer evento cadastrado na plataforma.
+  * **Organizador (`ORGANIZER`):** Pode validar apenas os ingressos dos seus próprios eventos.
+* **Métodos:** Leitura via câmera (QR Code com hash assinado) ou inserção manual do código/ID do ingresso.
+* **Idempotência:** A requisição realiza locking atômico na linha da tabela `TICKETS` para evitar validação duplicada em chamadas simultâneas.
+
+---
+
+## 6. Repasse Financeiro ao Organizador (Payout Cron)
+
+O processamento financeiro é executado automaticamente via **APScheduler**:
+
+1. **Rotina diária (00:00):** O Job verifica os eventos que foram realizados no dia anterior.
+2. **Cálculo do Repasse ($D+1$):**
+   * Consolidação da receita bruta de vendas.
+   * Subtração das taxas da plataforma.
+   * Depósito automático da receita líquida na carteira do organizador (`EVENT_PAYOUT`).

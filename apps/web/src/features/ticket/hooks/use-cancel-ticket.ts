@@ -17,7 +17,8 @@ export function useCancelTicket() {
     },
     onSuccess: (updatedTicket) => {
       queryClient.invalidateQueries({ queryKey: ['user-tickets'] });
-      queryClient.invalidateQueries({ queryKey: ['wallet', 'wallet-claims'] });
+      queryClient.invalidateQueries({ queryKey: ['wallet'] });
+      queryClient.invalidateQueries({ queryKey: ['wallet-claims'] });
       queryClient.setQueryData(['ticket', updatedTicket.id], updatedTicket);
 
       toast.success('Ingresso cancelado com sucesso!', {

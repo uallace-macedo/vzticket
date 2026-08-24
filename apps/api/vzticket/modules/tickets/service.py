@@ -1,6 +1,6 @@
 import hashlib
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from decimal import Decimal
 
 from sqlalchemy import select
@@ -69,6 +69,13 @@ class TicketService:
 
         if event.available_tickets < data.quantity:
             raise InsufficientTicketsError()
+
+        sales_deadline = event.sales_end_at or (
+            event.event_date + timedelta(minutes=30)
+        )
+
+        if now > sales_deadline:
+            raise EventSalesEndedError()
 
         unit_total = event.ticket_price + event.service_fee
         total_amount = unit_total * Decimal(data.quantity)

@@ -25,14 +25,13 @@ export function OrganizerEventsPage() {
     events,
     eventsData,
     totalEvents,
-    totalTicketsSold,
     isLoading,
     isRefetching,
     refetch,
     page,
     setPage,
-    search,
-    setSearch,
+    title,
+    setTitle,
   } = useOrganizerEvents();
 
   const { mutateAsync: createEvent, isPending } = useCreateEvent();
@@ -69,36 +68,25 @@ export function OrganizerEventsPage() {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <div className="bg-background-muted border border-foreground/10 rounded-2xl p-4 sm:p-5 flex items-center justify-between">
-          <div className="space-y-1">
-            <span className="text-[11px] font-bold uppercase text-foreground-muted tracking-wider">
-              Eventos Criados
-            </span>
-            <p className="text-2xl sm:text-3xl font-black text-foreground">
-              {isLoading ? '---' : totalEvents}
-            </p>
-          </div>
-
-          <button
-            onClick={() => refetch()}
-            title="Atualizar dados"
-            className="p-2 rounded-xl hover:bg-foreground/5 text-foreground-muted hover:text-foreground transition cursor-pointer"
-          >
-            <RefreshCw
-              className={`w-4 h-4 ${isRefetching ? 'animate-spin text-primary' : ''}`}
-            />
-          </button>
-        </div>
-
-        <div className="bg-background-muted border border-foreground/10 rounded-2xl p-4 sm:p-5 space-y-1">
+      <div className="bg-background-muted border border-foreground/10 rounded-2xl p-4 sm:p-5 flex items-center justify-between">
+        <div className="space-y-1">
           <span className="text-[11px] font-bold uppercase text-foreground-muted tracking-wider">
-            Total de Ingressos Vendidos
+            Eventos Criados
           </span>
           <p className="text-2xl sm:text-3xl font-black text-foreground">
-            {isLoading ? '---' : totalTicketsSold}
+            {isLoading ? '---' : totalEvents}
           </p>
         </div>
+
+        <button
+          onClick={() => refetch()}
+          title="Atualizar dados"
+          className="p-2 rounded-xl hover:bg-foreground/5 text-foreground-muted hover:text-foreground transition cursor-pointer"
+        >
+          <RefreshCw
+            className={`w-4 h-4 ${isRefetching ? 'animate-spin text-primary' : ''}`}
+          />
+        </button>
       </div>
 
       <div className="space-y-3">
@@ -111,8 +99,8 @@ export function OrganizerEventsPage() {
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-foreground-muted" />
             <input
               type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
               placeholder="Buscar evento por nome..."
               className="w-full bg-background-muted border border-foreground/10 rounded-full pl-9 pr-3 py-1.5 text-xs font-semibold text-foreground placeholder:text-foreground-muted outline-none focus:border-primary transition"
             />
@@ -127,10 +115,10 @@ export function OrganizerEventsPage() {
           <div className="flex flex-col items-center justify-center p-8 border border-dashed border-foreground/10 rounded-2xl bg-background-muted/30 text-center min-h-[250px]">
             <CalendarCheck2 className="w-10 h-10 text-foreground-muted mb-3" />
             <p className="text-sm font-bold text-foreground">
-              {search ? 'Nenhum evento encontrado.' : 'Você ainda não possui eventos cadastrados.'}
+              {title ? 'Nenhum evento encontrado.' : 'Você ainda não possui eventos cadastrados.'}
             </p>
             <p className="text-xs text-foreground-muted mt-1 max-w-sm">
-              {search
+              {title
                 ? 'Tente buscar por outro termo ou limpe a caixa de pesquisa.'
                 : 'Clique no botão "Criar Evento" para publicar e gerenciar ingressos.'}
             </p>

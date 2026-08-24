@@ -13,6 +13,7 @@ from vzticket.core.database import table_registry
 if TYPE_CHECKING:
     from vzticket.modules.tickets.model import Ticket
     from vzticket.modules.users.model import User
+    from vzticket.modules.events_payout.model import EventPayout
 
 
 class EventStatus(str, Enum):
@@ -108,6 +109,12 @@ class Event:
         init=False,
         back_populates='event',
         cascade='all, delete-orphan'
+    )
+
+    payout: Mapped[Optional['EventPayout']] = relationship(
+        'EventPayout', init=False,
+        back_populates='event',
+        uselist=False
     )
 
     @property

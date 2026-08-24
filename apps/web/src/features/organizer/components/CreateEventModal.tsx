@@ -20,7 +20,7 @@ import { EventPreviewHero } from './EventPreviewHero';
 interface CreateEventModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: CreateEventInput) => Promise<void>;
+  onSubmit: (data: CreateEventInput) => Promise<unknown>;
   isLoading?: boolean;
 }
 
@@ -72,34 +72,32 @@ export function CreateEventModal({ isOpen, onClose, onSubmit, isLoading }: Creat
   };
 
   const handleFormSubmit = async (data: CreateEventFormInput) => {
+    const eventDateIso = data.event_date ? new Date(data.event_date).toISOString() : new Date().toISOString();
+    const salesStartAtIso = data.sales_start_at
+      ? new Date(data.sales_start_at).toISOString()
+      : new Date().toISOString();
+
+    const salesEndAtIso = data.sales_end_at
+      ? new Date(data.sales_end_at).toISOString()
+      : eventDateIso;
+
+    const payloadData: CreateEventFormInput = {
+      ...data,
+      event_date: eventDateIso,
+      sales_start_at: salesStartAtIso,
+      sales_end_at: salesEndAtIso,
+      poster_url: mode === 'custom' ? data.custom_image_url : data.poster_url,
+      banner_url: mode === 'custom' ? data.custom_image_url : data.banner_url,
+    };
+
+    const parsedData = createEventSchema.parse(payloadData);
+
     try {
-      const eventDateIso = data.event_date ? new Date(data.event_date).toISOString() : new Date().toISOString();
-      const salesStartAtIso = data.sales_start_at
-        ? new Date(data.sales_start_at).toISOString()
-        : new Date().toISOString();
-
-      const salesEndAtIso = data.sales_end_at
-        ? new Date(data.sales_end_at).toISOString()
-        : eventDateIso;
-
-      const payloadData: CreateEventFormInput = {
-        ...data,
-        event_date: eventDateIso,
-        sales_start_at: salesStartAtIso,
-        sales_end_at: salesEndAtIso,
-        poster_url: mode === 'custom' ? data.custom_image_url : data.poster_url,
-        banner_url: mode === 'custom' ? data.custom_image_url : data.banner_url,
-      };
-
-      const parsedData = createEventSchema.parse(payloadData);
-
       await onSubmit(parsedData);
       reset();
       setSelectedMovie(null);
       onClose();
-    } catch (error) {
-      toast.error('Ocorreu um erro ao processar os dados do evento.');
-    }
+    } catch {}
   };
 
   const handleFormInvalid = () => {
@@ -178,7 +176,12 @@ export function CreateEventModal({ isOpen, onClose, onSubmit, isLoading }: Creat
               watch={watch as any}
             />
 
-            <EventTicketFields register={register as any} errors={errors as any} watch={watch as any} />
+            <EventTicketFields
+              register={register as any}
+              errors={errors as any}
+              watch={watch as any}
+              setValue={setValue as any}
+            />
 
             <EventDateFields register={register as any} errors={errors as any} />
 

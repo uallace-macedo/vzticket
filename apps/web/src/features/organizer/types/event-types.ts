@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 export const paymentMethodSchema = z.enum(['balance', 'pix']);
+export type PaymentMethod = z.infer<typeof paymentMethodSchema>;
 
 export const createEventSchema = z
   .object({
@@ -47,6 +48,31 @@ export const createEventSchema = z
 
 export type CreateEventFormInput = z.input<typeof createEventSchema>;
 export type CreateEventInput = z.infer<typeof createEventSchema>;
+
+export interface CreateEventResponse {
+  title: string,
+  description: string,
+  available_tickets: number,
+  ticket_price: number,
+  ticket_title: string,
+  ticket_description: string,
+  event_date: Date,
+  sales_start_at: Date,
+  sales_end_at: Date,
+  location_name: string,
+  cep: string,
+  address: string,
+  number: string,
+  neighborhood: string,
+  city: string,
+  state: string,
+  complement: string,
+  poster_url: string,
+  banner_url: string,
+  custom_image_url: string,
+  maps_url: string,
+  payment_method: PaymentMethod
+}
 
 export interface TmdbMovie {
   id: number;

@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Ticket, User, LogOut, ChevronRight, Wallet, Calendar, ScanLine } from 'lucide-react';
+import { Ticket, LogOut, ChevronRight, Wallet, Calendar, ScanLine } from 'lucide-react';
 import { PAGES } from '@/constants/pages';
 import { useAuth } from '@/features/auth/hooks/use-auth';
 import { useAuthStore } from '@/features/auth/store/use-auth-store';
@@ -50,17 +50,6 @@ export function AccountDrawer({ isOpen, onClose }: AccountDrawerProps) {
         <div>
           <div className="w-12 h-1.5 bg-foreground/15 rounded-full mx-auto mb-4 sm:hidden" />
           <div className="mt-6 bg-background-muted/60 border border-foreground/5 rounded-2xl p-2 space-y-1">
-            <button
-              onClick={() => handleNavigate(PAGES.PRIVATE.PROFILE)}
-              className="w-full flex items-center justify-between p-3.5 rounded-xl hover:bg-background transition cursor-pointer group"
-            >
-              <div className="flex items-center gap-3">
-                <User className="w-5 h-5 text-foreground-muted group-hover:text-primary transition" />
-                <span className="text-sm font-bold text-foreground">Informações pessoais</span>
-              </div>
-              <ChevronRight className="w-4 h-4 text-foreground-muted group-hover:translate-x-0.5 transition" />
-            </button>
-
             <button
               onClick={() => handleNavigate(PAGES.PRIVATE.WALLET)}
               className="w-full flex items-center justify-between p-3.5 rounded-xl hover:bg-background transition cursor-pointer group"

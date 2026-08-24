@@ -1,16 +1,6 @@
-# Arquitetura do Sistema e Modelagem (vzticket)
+# Arquitetura e Modelagem de Dados
 
-Visão geral da estrutura de dados, papéis de usuários e relacionamentos entre entidades da plataforma **vzticket**.
-
----
-
-## Perfis e Autenticação
-
-| Papel | Descrição |
-| :--- | :--- |
-| **Organizador** | Responsável por criar, configurar e publicar eventos na plataforma. Pago via saldo da carteira ou PIX. |
-| **Cliente** | Usuário final que navega no catálogo, adquire ingressos e visualiza sua carteira/QR Codes. |
-| **Portaria** | Operador responsável pela validação e leitura dos QR Codes dos ingressos na entrada dos eventos. |
+Visão geral do modelo de dados do sistema **VzTicket**, relacionamentos e restrições da base de dados.
 
 ---
 
@@ -46,8 +36,8 @@ erDiagram
     
     int available_tickets
     decimal ticket_price "Numeric(10, 2)"
-    decimal service_fee "Numeric(10, 2) - Taxa de serviço individual por ingresso"
-    string ticket_title "Ex: Entrada Geral"
+    decimal service_fee "Numeric(10, 2) - Taxa de serviço por ingresso"
+    string ticket_title "Ex: Pista"
     text ticket_description "NULLABLE"
     
     datetime event_date
@@ -55,7 +45,7 @@ erDiagram
     datetime sales_end_at "NULLABLE"
 
     string location_name
-    string cep "VARCHAR(8) - Sanitizado (Apenas números)"
+    string cep "VARCHAR(8) - Apenas números"
     string address
     string number
     string neighborhood
@@ -67,7 +57,7 @@ erDiagram
     string poster_url "NULLABLE"
     string banner_url "NULLABLE"
     string custom_image_url "NULLABLE"
-    string maps_url "NULLABLE"
+    string maps_url
     
     datetime created_at
     datetime updated_at

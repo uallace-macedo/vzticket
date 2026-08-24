@@ -7,6 +7,7 @@ from vzticket.core.exceptions import register_exception_handlers
 from vzticket.core.exceptions.schemas import ValidationErrorResponse
 from vzticket.core.settings import settings
 from vzticket.router import api_router
+from vzticket.lifespan import lifespan
 
 origins = [settings.WEB_URL]
 app = FastAPI(
@@ -18,6 +19,7 @@ app = FastAPI(
             'description': 'Erro de validação nos campos informados.',
         }
     },
+    lifespan=lifespan
 )
 
 app.add_middleware(

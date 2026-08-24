@@ -83,7 +83,7 @@ class EventPayout:
 
     event: Mapped['Event'] = relationship(
         init=False,
-        backref='payout'
+        back_populates='payout'
     )
 
     organizer: Mapped['User'] = relationship(
