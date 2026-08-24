@@ -1,6 +1,7 @@
 import { PAGES } from "@/constants/pages";
 import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
 import { toast } from "sonner";
+import { useAuthStore } from "@/features/auth/store/use-auth-store";
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -25,7 +26,7 @@ const processQueue = (error: AxiosError | null) => {
     }
   });
 
-  failedQueue = [];;
+  failedQueue = [];
 }
 
 api.interceptors.response.use(
@@ -57,6 +58,7 @@ api.interceptors.response.use(
         return api(originalRequest);
       } catch (refreshError) {
         processQueue(refreshError as AxiosError);
+        useAuthStore.getState().setUser(null);
         toast.error("Sua sessão expirou. Por favor, faça login novamente.");
 
         setTimeout(() => {

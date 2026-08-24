@@ -1,15 +1,17 @@
-import type { UseFormRegister, FieldErrors, UseFormWatch } from 'react-hook-form';
-import { Ticket, Percent } from 'lucide-react';
+import type { UseFormRegister, FieldErrors, UseFormWatch, UseFormSetValue } from 'react-hook-form';
+import { Ticket, Percent, Wallet, QrCode } from 'lucide-react';
 import type { CreateEventFormInput } from '../types/event-types';
 
 interface EventTicketFieldsProps {
   register: UseFormRegister<CreateEventFormInput>;
   errors: FieldErrors<CreateEventFormInput>;
   watch: UseFormWatch<CreateEventFormInput>;
+  setValue: UseFormSetValue<CreateEventFormInput>;
 }
 
-export function EventTicketFields({ register, errors, watch }: EventTicketFieldsProps) {
+export function EventTicketFields({ register, errors, watch, setValue }: EventTicketFieldsProps) {
   const ticketPrice = watch('ticket_price') || 0;
+  const paymentMethod = watch('payment_method') || 'balance';
   
   const feePercentage = Number(import.meta.env.VITE_EVENT_CREATION_FEE_PERCENTAGE || 0.05);
   const calculatedFee = (Number(ticketPrice) * feePercentage).toFixed(2);
@@ -61,6 +63,52 @@ export function EventTicketFields({ register, errors, watch }: EventTicketFields
           {errors.available_tickets && (
             <span className="text-xs text-destructive mt-1 block">{errors.available_tickets.message}</span>
           )}
+        </div>
+      </div>
+
+      <div className="space-y-2 pt-2">
+        <label className="block text-xs font-bold text-foreground">
+          Forma de Pagamento da Taxa de Criação *
+        </label>
+
+        <input type="hidden" {...register('payment_method')} />
+
+        <div className="grid grid-cols-2 gap-3">
+          <button
+            type="button"
+            onClick={() => setValue('payment_method', 'balance', { shouldValidate: true })}
+            className={`p-3 rounded-xl border flex items-center gap-3 transition cursor-pointer text-left ${
+              paymentMethod === 'balance'
+                ? 'border-primary bg-primary/10 text-foreground'
+                : 'border-foreground/10 bg-background-muted hover:bg-foreground/5 text-foreground-muted'
+            }`}
+          >
+            <div className={`p-2 rounded-lg ${paymentMethod === 'balance' ? 'bg-primary text-white' : 'bg-foreground/10'}`}>
+              <Wallet className="w-4 h-4" />
+            </div>
+            <div>
+              <p className="text-xs font-bold">Saldo Interno</p>
+              <p className="text-[10px] opacity-70">Debitar da sua carteira</p>
+            </div>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setValue('payment_method', 'pix', { shouldValidate: true })}
+            className={`p-3 rounded-xl border flex items-center gap-3 transition cursor-pointer text-left ${
+              paymentMethod === 'pix'
+                ? 'border-primary bg-primary/10 text-foreground'
+                : 'border-foreground/10 bg-background-muted hover:bg-foreground/5 text-foreground-muted'
+            }`}
+          >
+            <div className={`p-2 rounded-lg ${paymentMethod === 'pix' ? 'bg-primary text-white' : 'bg-foreground/10'}`}>
+              <QrCode className="w-4 h-4" />
+            </div>
+            <div>
+              <p className="text-xs font-bold">PIX</p>
+              <p className="text-[10px] opacity-70">Pagar via QR Code</p>
+            </div>
+          </button>
         </div>
       </div>
 

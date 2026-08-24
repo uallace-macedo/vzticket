@@ -25,7 +25,6 @@ export function OrganizerEventsPage() {
     events,
     eventsData,
     totalEvents,
-    totalTicketsSold,
     isLoading,
     isRefetching,
     refetch,

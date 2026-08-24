@@ -2,6 +2,7 @@ import { api } from '@/lib/axios';
 import { ROUTES } from '@/constants/routes';
 import type {
   CreateEventInput,
+  CreateEventResponse,
   GetOrganizerEventsParams,
   PaginatedEventsResponse,
   TmdbSearchResponse,
@@ -21,8 +22,9 @@ export async function fetchAddressByCep(cep: string): Promise<ViaCepResponse> {
   return response.json();
 }
 
-export async function createOrganizerEvent(data: CreateEventInput): Promise<void> {
-  await api.post(ROUTES.EVENTS.CREATE, data);
+export async function createOrganizerEvent(data: CreateEventInput): Promise<CreateEventResponse> {
+  const response = await api.post(ROUTES.EVENTS.CREATE, data);
+  return response.data;
 }
 
 export async function getOrganizerEvents(params: GetOrganizerEventsParams): Promise<PaginatedEventsResponse> {
