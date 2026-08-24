@@ -1,0 +1,28 @@
+export const ROUTES = {
+  AUTH: {
+    LOGIN: '/api/v1/auth/login',
+    REGISTER: '/api/v1/auth/register',
+    LOGOUT: '/api/v1/auth/logout'
+  },
+  EVENTS: {
+    GET_ALL: '/api/v1/events',
+    GET_BY_ID: (id: string) => `/api/v1/events/${id}`,
+    TMDB: '/api/v1/events/tmdb',
+    CREATE: '/api/v1/events',
+    MY_EVENTS: '/api/v1/events/my-events'
+  },
+  WALLET: {
+    GET_BALANCE: '/api/v1/wallet',
+    CREATE_CLAIM: '/api/v1/wallet/claims',
+    CLAIMS: '/api/v1/wallet/claims'
+  },
+  TICKETS: {
+    PURCHASE: (event_id: string) =>  `/api/v1/tickets/events/${event_id}/purchase`,
+    MY: '/api/v1/tickets/my-tickets',
+    TICKET: (ticket_id: string) => `/api/v1/tickets/${ticket_id}`,
+    CANCEL: (ticket_id: string) => `/api/v1/tickets/${ticket_id}/cancel`
+  },
+  GATEKEEPER: {
+    VALIDATE_TICKET: '/api/v1/gatekeeper/validate-ticket'
+  }
+}
