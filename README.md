@@ -57,6 +57,29 @@ Para conferir o detalhamento técnico e as especificações de regras de negóci
 
 ---
 
+## 🌐 Acesso Online (Deploy)
+
+A aplicação está online e pronta para uso:
+
+* **Aplicação Web (Vercel):** `https://vzticket.vercel.app`
+* **API Backend (Render):** `https://vzticket.onrender.com`
+
+> ⚠️ **Nota sobre o primeiro acesso:** O backend está hospedado no plano gratuito do Render. Caso a primeira requisição demore alguns segundos para responder, é porque o servidor estava em modo de hibernação (sleep) e está acordando. As requisições seguintes responderão normalmente!
+
+---
+
+## 🔑 Credenciais de Teste (Padrão)
+
+O banco de dados já é inicializado com usuários pré-cadastrados para cada perfil de acesso do sistema (RBAC):
+
+| Perfil | E-mail | Senha | Permissões |
+| :--- | :--- | :--- | :--- |
+| **Cliente** | `client@example.com` | `secret` | Compra ingressos, faz depósitos via PIX e gerencia carteira. |
+| **Organizador** | `organizer@example.com` | `secret` | Cria eventos (customizados ou TMDB) e acompanha liquidações. |
+| **Portaria (Gatekeeper)** | `gatekeeper@example.com` | `secret` | Valida QR Codes de entrada de qualquer evento **NO DIA** do show. |
+
+---
+
 ## 🚀 Como Executar o Projeto
 
 Certifique-se de ter o **Git** e o **Docker** (com Docker Compose) instalados na sua máquina.
