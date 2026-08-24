@@ -40,6 +40,10 @@ pythonpath = '.'
 addopts = '-p no:warnings'
 asyncio_mode = 'auto'
 
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["vzticket*"]
+
 [tool.taskipy.tasks]
 lint = 'ruff check --fix'
 test = 'pytest --cov=vzticket -vv'
