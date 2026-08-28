@@ -1,0 +1,34 @@
+# VzTicket - Cursor & Roo Code Rules
+
+## 1. General Principles
+- **Language**: All code, variables, types, and internal code comments MUST be in English.
+- **API Responses**: Error messages (`detail`) shown to end-users MUST be in Portuguese (BR).
+- **Security First**: 
+  - NEVER leak internal hashes or secrets in public DTOs/schemas.
+  - ALWAYS perform ownership checks on resource access by ID.
+  - NEVER commit `.env` files.
+
+---
+
+## 2. Backend Rules (`apps/api`)
+- **Stack**: FastAPI (100% Async), SQLAlchemy 2.0 (Async), Asyncpg, Pytest, Pytest-Asyncio.
+- **Architecture**: Modular feature-based architecture under `vzticket/modules/<feature>/`.
+- **Security & Authorization**:
+  - `GET /tickets/{id}` MUST check if `current_user.id == ticket.user_id` OR if user is `GATEKEEPER`/`ORGANIZER`. Otherwise, return `403 Forbidden`.
+  - `TicketResponse` Pydantic DTO MUST NOT contain `qr_code_hash` for non-owners.
+  - Implement HMAC-SHA256 signature for QR Code generation and verification.
+- **Concurrency**: Use `SELECT ... FOR UPDATE` (database row-locking) during checkout (`available_tickets` deduction) and ticket validation (check-in) to prevent race conditions.
+- **Testing Mandate**: Write Pytest tests for every core flow:
+  - Wallet balance deposit and transaction audit log.
+  - Ticket checkout with atomic stock decrement.
+  - Check-in validation with idempotency (second scan attempt MUST fail).
+
+---
+
+## 3. Frontend Rules (`apps/web`)
+- **Stack**: React 19, Vite, TypeScript, Tailwind CSS v4, TanStack React Query v5, Zustand, React Hook Form + Zod, Sonner.
+- **Structure**: Feature-based under `src/features/<feature_name>/`.
+- **Data Flow**:
+  1. `services/`: Axios endpoints strictly. No UI side-effects or try-catch here.
+  2. `hooks/`: TanStack Query custom hooks. Handles errors via Sonner toasts (`toast.error(...)`).
+  3. `components/`: UI layer. Must be clean and under 200 lines per file.
