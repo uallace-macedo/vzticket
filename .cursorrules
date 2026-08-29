@@ -11,33 +11,72 @@
 ---
 
 ## 2. Backend Rules (`apps/api`)
-- **Stack**: FastAPI (100% Async), SQLAlchemy 2.0 (Async), Asyncpg, Pytest, Pytest-Asyncio.
-- **Architecture**: Modular feature-based architecture under `vzticket/modules/<feature>/`.
+- **Stack**: FastAPI (100% Async), SQLAlchemy 2.0 (Async), Asyncpg, Pytest, Pytest-Asyncio, Pwdlib (Argon2), PyJWT.
+- **Architecture**: Modular feature-based architecture under `vzticket/modules/<feature_name>/` using strict Layered Architecture (Controller -> Service -> Repository).
 - **Security & Authorization**:
   - `GET /tickets/{id}` MUST check if `current_user.id == ticket.user_id` OR if user is `GATEKEEPER`/`ORGANIZER`. Otherwise, return `403 Forbidden`.
   - `TicketResponse` Pydantic DTO MUST NOT contain `qr_code_hash` for non-owners.
   - Implement HMAC-SHA256 signature for QR Code generation and verification.
+  - Authentication MUST support **HTTP-Only Cookies** (`access_token`, `refresh_token`) with fallback to **Authorization Bearer Header** for Swagger UI compatibility.
 - **Concurrency**: Use `SELECT ... FOR UPDATE` (database row-locking) during checkout (`available_tickets` deduction) and ticket validation (check-in) to prevent race conditions.
 - **Testing Mandate**: Write Pytest tests for every core flow:
+  - Auth registration, login (verifying cookies + JSON response), refresh, and logout.
   - Wallet balance deposit and transaction audit log.
   - Ticket checkout with atomic stock decrement.
   - Check-in validation with idempotency (second scan attempt MUST fail).
 
-### 2.1. Python Code Style Rules
-- **Indentation**: ALWAYS use 4 spaces (standard 1 indentation level in Python) for code block alignment.
-- **Ruff Standards**: STRICTLY adhere to the Ruff configuration defined in `pyproject.toml` (single quotes `'`, 4-space indent, line-length 88).
-- **Auto-formatting**: Run `task lint` after creating or modifying any `.py` file to ensure code formatting matches Ruff's standards automatically.
+### 2.1. Layering & Clean Code Constraints
+- **Strict Separation of Concerns**:
+  - **Routers (`v1.py`)**: Responsible ONLY for parsing HTTP requests, calling Service methods, managing HTTP-Only cookies, and returning schemas. NO database queries or business rules allowed here.
+  - **Services (`service.py`)**: Holds ALL business rules, validation logic, password hashing, and token issuance. MUST receive Repositories via Dependency Injection.
+  - **Repositories (`repository.py`)**: Handles ONLY raw database operations using AsyncSession.
+- **Centralized Route Registry**: DO NOT register routers directly in `vzticket/main.py`. Include all module routers in `vzticket/core/routes.py` and register `main_router` in `main.py`.
+- **Swagger Lock Support**: OAuth2 scheme in dependencies MUST read token from cookies first, falling back to Bearer header so the Swagger UI "Authorize" button works properly.
 
-### 2.2. Exception Handling & Error Standards
+### 2.2. Service Dependency Injection & Instantiation
+- **No Manual Service Instantiation**: NEVER instantiate services manually inside router functions (e.g., avoid `_get_service(db)` or `AuthService(db)` inline).
+- **Annotated Service Dependencies**: Define injectable type aliases using FastAPI `Depends` for each module service (e.g., `AuthServiceDep = Annotated[AuthService, Depends(get_auth_service)]`).
+- **Factory & Dependency Pattern**: Inject the database session (`AsyncSession`) directly into the provider/factory function so the service is constructed cleanly via Dependency Injection:
+  ```python
+  async def get_auth_service(
+      db: Annotated[AsyncSession, Depends(get_db)],
+  ) -> AuthService:
+      return AuthService(repository=UserRepository(db))
+
+  AuthServiceDep = Annotated[AuthService, Depends(get_auth_service)]
+  ```
+  In routers, inject the service directly:
+  ```python
+  async def refresh(
+      response: Response,
+      service: AuthServiceDep,
+      refresh_token: Annotated[str | None, Cookie(alias="refresh_token")] = None,
+  ) -> MessageResponse:
+      ...
+  ```
+
+### 2.3. Python Code Quality & Linter Rules (Ruff/Tasklint)
+- **HTTP Status Codes**: NEVER use raw integers for HTTP status codes in code or tests (e.g., avoid `status_code == 200` or `responses={401: ...}`). ALWAYS use `fastapi.status` constants (e.g., `status.HTTP_200_OK`, `status.HTTP_401_UNAUTHORIZED`).
+- **No Redundant `response_model`**: DO NOT explicitly pass `response_model` to route decorators if the function signature already includes a return type hint (e.g., `async def endpoint(...) -> MessageResponse:`). Redundant `response_model` declarations trigger linter warnings.
+- **Strict 88-Character Line Length**: Ensure all lines (including docstrings, imports, decorators, and function arguments) stay strictly under 88 characters.
+- **Set Literals for Membership Testing**: Use set literals `{...}` instead of tuple `(...)` or list `[...]` literals with the `in` operator (e.g., `x in {None, ''}` instead of `x in (None, '')`).
+
+### 2.4. Exception Handling & Error Standards
 - **Core Error Base**: ALL custom business exceptions MUST inherit from `vzticket.core.exceptions.base.AppError`.
 - **Domain Exceptions**: Each feature module MUST contain an `exceptions.py` file (e.g., `vzticket/modules/auth/exceptions.py`) defining domain-specific errors extending `AppError`.
-- **Forbidden Usage**: NEVER raise raw `HTTPException` inside domain code or services. Always raise domain-specific `AppError` subclasses.
+- **Forbidden Usage**: STRICTLY FORBIDDEN to raise raw `HTTPException` inside domain code, services, or routers. Always raise domain-specific `AppError` subclasses.
 - **Error Messages**: Exception default messages MUST be written in Portuguese (BR).
-- **Swagger Documentation**: Always use `create_error_response(...)` helper from `vzticket.core.exceptions.swagger` to document custom HTTP errors in FastAPI router responses metadata (`responses={...}`)
+- **Swagger Documentation**: ALWAYS use `create_error_response(...)` helper from `vzticket.core.exceptions.swagger` to document custom HTTP errors in FastAPI router responses metadata (`responses={...}`).
 
 ---
 
-## 3. Frontend Rules (`apps/web`)
+## 3. Agent Execution Rules (Roo Code / Cursor)
+- **No Automatic Terminal Execution**: NEVER run terminal commands (`pytest`, `task test`, etc.) automatically. Instruct the user to run them manually in their terminal.
+- **No Direct Commit**: NEVER execute git commit or push commands.
+
+---
+
+## 4. Frontend Rules (`apps/web`)
 - **Stack**: React 19, Vite, TypeScript, Tailwind CSS v4, TanStack React Query v5, Zustand, React Hook Form + Zod, Sonner.
 - **Structure**: Feature-based under `src/features/<feature_name>/`.
 - **Data Flow**:

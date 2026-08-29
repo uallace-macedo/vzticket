@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
-from vzticket.core.database import Base
+from vzticket.core.database import Base, get_db
 from vzticket.main import app
 
 
@@ -23,18 +23,34 @@ async def engine():
 
 @pytest.fixture
 async def session(engine) -> AsyncGenerator[AsyncSession, None]:
-    session_factory = async_sessionmaker(
-        bind=engine,
-        class_=AsyncSession,
-        expire_on_commit=False,
-    )
-    async with session_factory() as session:
-        yield session
+    async with engine.connect() as connection:
+        transaction = await connection.begin()
+    
+        session_factory = async_sessionmaker(
+            bind=connection,
+            class_=AsyncSession,
+            expire_on_commit=False,
+            join_transaction_mode='create_savepoint'
+        )
+
+        async with session_factory() as session:
+            yield session
+
+        await transaction.rollback()
 
 
 @pytest.fixture
-async def client() -> AsyncGenerator[AsyncClient, None]:
+async def client(
+    session: AsyncSession
+) -> AsyncGenerator[AsyncClient, None]:
+    async def override_get_db() -> AsyncGenerator[AsyncSession, None]:
+        yield session
+
+    app.dependency_overrides[get_db] = override_get_db
+
     async with AsyncClient(
         transport=ASGITransport(app=app), base_url='http://test'
     ) as ac:
         yield ac
+
+    app.dependency_overrides.clear()
