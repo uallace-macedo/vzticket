@@ -23,6 +23,18 @@
   - Ticket checkout with atomic stock decrement.
   - Check-in validation with idempotency (second scan attempt MUST fail).
 
+### 2.1. Python Code Style Rules
+- **Indentation**: ALWAYS use 4 spaces (standard 1 indentation level in Python) for code block alignment.
+- **Ruff Standards**: STRICTLY adhere to the Ruff configuration defined in `pyproject.toml` (single quotes `'`, 4-space indent, line-length 88).
+- **Auto-formatting**: Run `task lint` after creating or modifying any `.py` file to ensure code formatting matches Ruff's standards automatically.
+
+### 2.2. Exception Handling & Error Standards
+- **Core Error Base**: ALL custom business exceptions MUST inherit from `vzticket.core.exceptions.base.AppError`.
+- **Domain Exceptions**: Each feature module MUST contain an `exceptions.py` file (e.g., `vzticket/modules/auth/exceptions.py`) defining domain-specific errors extending `AppError`.
+- **Forbidden Usage**: NEVER raise raw `HTTPException` inside domain code or services. Always raise domain-specific `AppError` subclasses.
+- **Error Messages**: Exception default messages MUST be written in Portuguese (BR).
+- **Swagger Documentation**: Always use `create_error_response(...)` helper from `vzticket.core.exceptions.swagger` to document custom HTTP errors in FastAPI router responses metadata (`responses={...}`)
+
 ---
 
 ## 3. Frontend Rules (`apps/web`)
