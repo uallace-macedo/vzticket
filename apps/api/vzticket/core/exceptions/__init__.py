@@ -2,15 +2,16 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
-from typing import Any
 
 from .base import AppError
 from .schemas import ErrorResponse, ValidationErrorItem, ValidationErrorResponse
 
-__all__ = ["AppError", "register_exception_handlers"]
+__all__ = ["AppError", "register_exception_handlers", "ErrorResponse", "ValidationErrorResponse"]
 
 
 def register_exception_handlers(app: FastAPI) -> None:

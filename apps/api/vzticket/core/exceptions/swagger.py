@@ -1,8 +1,5 @@
 from typing import Type
 
-from fastapi import FastAPI
-from pydantic import BaseModel
-
 from .base import AppError
 from .schemas import ErrorResponse
 

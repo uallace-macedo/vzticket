@@ -22,5 +22,5 @@ __all__ = [
     'ClaimTokenType',
     'EventPayout',
     'PayoutStatus',
-    'TransactionType',
+    'TransactionType', 'WalletClaimToken', 'WalletTransaction',
 ]

@@ -27,7 +27,9 @@ class Settings(BaseSettings):
     secret_key: str = 'change-me-in-production'
     algorithm: str = 'HS256'
     access_token_expire_minutes: int = 15
+    access_token_cookie_name: str ='change-me-in-production-at'
     refresh_token_expire_minutes: int = 720
+    refresh_token_cookie_name: str ='change-me-in-production-rt'
 
     qr_code_hmac_secret: str = 'change-me-in-production'
 
