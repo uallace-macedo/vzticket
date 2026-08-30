@@ -1,6 +1,6 @@
 """Data access layer for the wallet module."""
 
-from apps.api.vzticket.modules.wallet.models import WalletTransaction
+from vzticket.modules.wallet.models import WalletTransaction
 
 
 import uuid
