@@ -19,15 +19,19 @@ def create_error_response(exception_cls: Type[AppError], description: str) -> di
     dict
         A dictionary suitable for FastAPI ``responses`` mapping.
     """
+    instance = exception_cls()
+
     return {
-        "model": ErrorResponse,
-        "description": description,
-        "content": {
-            "application/json": {
-                "example": {
-                    "code": exception_cls.code,
-                    "detail": exception_cls.message,
+        instance.status_code: {
+            "model": ErrorResponse,
+            "description": description,
+            "content": {
+                "application/json": {
+                    "example": {
+                        "code": exception_cls.code,
+                        "detail": exception_cls.message,
+                    }
                 }
-            }
-        },
+            },
+        }
     }

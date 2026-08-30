@@ -1,6 +1,7 @@
 """HTTP routes for the auth module."""
 
 from typing import Annotated
+from http import HTTPStatus
 
 from fastapi import APIRouter, Cookie, Depends, Response
 from fastapi.security import OAuth2PasswordRequestForm
@@ -62,9 +63,11 @@ def _clear_auth_cookies(response: Response) -> None:
 @router.post(
     '/register',
     response_model=UserResponse,
-    status_code=201,
+    status_code=HTTPStatus.CREATED,
     responses={
-        409: create_error_response(EmailAlreadyRegisteredError, 'E-mail já cadastrado')
+        **create_error_response(
+            EmailAlreadyRegisteredError, 'E-mail já cadastrado'
+        ),
     },
 )
 async def register(
@@ -79,7 +82,9 @@ async def register(
     '/login',
     response_model=UserResponse,
     responses={
-        401: create_error_response(InvalidCredentialsError, 'Credenciais inválidas')
+        **create_error_response(
+            InvalidCredentialsError, 'Credenciais inválidas'
+        )
     },
 )
 async def login(
@@ -101,7 +106,9 @@ async def login(
     '/refresh',
     response_model=MessageResponse,
     responses={
-        401: create_error_response(InvalidTokenError, 'Token inválido ou expirado')
+        **create_error_response(
+            InvalidTokenError, 'Token inválido ou expirado'
+        )
     },
 )
 async def refresh(
@@ -126,7 +133,9 @@ async def refresh(
     '/logout',
     response_model=MessageResponse,
     responses={
-        401: create_error_response(UnauthorizedError, 'Autenticação necessária')
+        **create_error_response(
+            UnauthorizedError, 'Autenticação necessária'
+        )
     },
 )
 async def logout(
@@ -142,7 +151,9 @@ async def logout(
     '/me',
     response_model=UserResponse,
     responses={
-        401: create_error_response(UnauthorizedError, 'Autenticação necessária')
+        **create_error_response(
+            UnauthorizedError, 'Autenticação necessária'
+        )
     },
 )
 async def me(

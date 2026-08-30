@@ -8,7 +8,7 @@ from vzticket.core.exceptions.base import AppError
 class EmailAlreadyRegisteredError(AppError):
     """Raised when attempting to register an email that already exists."""
 
-    status_code: int = HTTPStatus.CONFLICT.value
+    status_code: int = HTTPStatus.CONFLICT
     code: str = 'EMAIL_ALREADY_REGISTERED'
     message: str = 'Este e-mail já está cadastrado.'
 
@@ -16,7 +16,7 @@ class EmailAlreadyRegisteredError(AppError):
 class InvalidCredentialsError(AppError):
     """Raised when the provided credentials do not match a valid user."""
 
-    status_code: int = HTTPStatus.UNAUTHORIZED.value
+    status_code: int = HTTPStatus.UNAUTHORIZED
     code: str = 'INVALID_CREDENTIALS'
     message: str = 'E-mail ou senha inválidos.'
 
@@ -24,7 +24,7 @@ class InvalidCredentialsError(AppError):
 class UnauthorizedError(AppError):
     """Raised when the request is not authenticated."""
 
-    status_code: int = HTTPStatus.UNAUTHORIZED.value
+    status_code: int = HTTPStatus.UNAUTHORIZED
     code: str = 'UNAUTHORIZED'
     message: str = 'Autenticação necessária para acessar este recurso.'
 
@@ -32,6 +32,6 @@ class UnauthorizedError(AppError):
 class InvalidTokenError(AppError):
     """Raised when a provided token is invalid, expired or malformed."""
 
-    status_code: int = HTTPStatus.UNAUTHORIZED.value
+    status_code: int = HTTPStatus.UNAUTHORIZED
     code: str = 'INVALID_TOKEN'
     message: str = 'Token inválido ou expirado.'
