@@ -60,7 +60,12 @@ class WalletService:
             raise InvalidClaimTokenError
         if token.status != ClaimTokenStatus.PENDING:
             raise ClaimTokenAlreadyUsedError
-        if token.expires_at <= datetime.now(timezone.utc):
+
+        expires_at = token.expires_at
+        if expires_at.tzinfo is None:
+            expires_at = expires_at.replace(tzinfo=timezone.utc)
+
+        if expires_at <= datetime.now(timezone.utc):
             token.status = ClaimTokenStatus.EXPIRED
             await self._repository.commit()
             raise ExpiredClaimTokenError
