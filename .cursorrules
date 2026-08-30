@@ -56,9 +56,8 @@
   ```
 
 ### 2.3. Python Code Quality & Linter Rules (Ruff/Tasklint)
-- **HTTP Status Codes**: NEVER use raw integers for HTTP status codes in code or tests (e.g., avoid `status_code == 200` or `responses={401: ...}`). ALWAYS use `fastapi.status` constants (e.g., `status.HTTP_200_OK`, `status.HTTP_401_UNAUTHORIZED`).
+- **HTTP Status Codes**: NEVER use raw integers for HTTP status codes in code or tests (e.g., avoid `status_code == 200` or `responses={401: ...}`). ALWAYS use `http.HTTPStatus` constants (e.g., `HTTPStatus.OK`, `HTTPStatus.UNAUTHORIZED`).
 - **No Redundant `response_model`**: DO NOT explicitly pass `response_model` to route decorators if the function signature already includes a return type hint (e.g., `async def endpoint(...) -> MessageResponse:`). Redundant `response_model` declarations trigger linter warnings.
-- **Strict 88-Character Line Length**: Ensure all lines (including docstrings, imports, decorators, and function arguments) stay strictly under 88 characters.
 - **Set Literals for Membership Testing**: Use set literals `{...}` instead of tuple `(...)` or list `[...]` literals with the `in` operator (e.g., `x in {None, ''}` instead of `x in (None, '')`).
 
 ### 2.4. Exception Handling & Error Standards
@@ -66,7 +65,33 @@
 - **Domain Exceptions**: Each feature module MUST contain an `exceptions.py` file (e.g., `vzticket/modules/auth/exceptions.py`) defining domain-specific errors extending `AppError`.
 - **Forbidden Usage**: STRICTLY FORBIDDEN to raise raw `HTTPException` inside domain code, services, or routers. Always raise domain-specific `AppError` subclasses.
 - **Error Messages**: Exception default messages MUST be written in Portuguese (BR).
-- **Swagger Documentation**: ALWAYS use `create_error_response(...)` helper from `vzticket.core.exceptions.swagger` to document custom HTTP errors in FastAPI router responses metadata (`responses={...}`).
+- **Swagger Documentation**: ALWAYS use `**create_error_response(ExceptionClass, message)` helper from `vzticket.core.exceptions.swagger` to document custom HTTP errors in FastAPI router responses metadata (`responses={...}`).
+
+### 2.5. Testing Architecture & Standards
+- **Mirroring Directory Structure**: Tests MUST mirror the exact modular feature structure under `tests/modules/<feature_name>/`.
+  - Example structure for `auth` module:
+    ```
+    vzticket/modules/auth/       -->  tests/modules/auth/
+    ├── routers/v1.py            -->  ├── routers/test_v1.py
+    ├── service.py               -->  ├── test_service.py
+    └── repository.py            -->  └── test_repository.py
+    ```
+- **Mandatory Test Layers per Module**:
+  - **Routers (`routers/test_v1.py`)**: Integration tests using `httpx.AsyncClient`. MUST test HTTP status codes, cookies, JSON schemas, headers, and end-to-end endpoint security.
+  - **Services (`test_service.py`)**: Unit/Integration tests focused on domain business logic, edge cases, error conditions (verifying `AppError` subclasses), password hashing, and token issuance.
+  - **Repositories (`test_repository.py`)**: Persistence layer tests using real async database sessions (`AsyncSession`) to verify raw SQL queries, row locking (`FOR UPDATE`), constraints, and transactions.
+- **HTTP Status Code Enforcement in Tests**:
+  - NEVER use raw integers (e.g., `assert response.status_code == 200`).
+  - ALWAYS use `http.HTTPStatus` constants (e.g., `assert response.status_code == HTTPStatus.OK`).
+- **Core Coverage Requirements**:
+  - **Auth**: Registration, login (cookie set-up + JSON), refresh token flow, logout cookie clearing, and invalid credentials.
+  - **Wallet**: Deposit creation, claim idempotency, expired token failure, and balance audits.
+  - **Tickets**: Atomic stock decrement on checkout, race condition prevention, and check-in idempotency (second scan attempt fails).
+- **Modular Conftest & Fixtures Policy**:
+  - Prefer using and expanding `conftest.py` fixtures over inline setup logic to keep test bodies concise and readable.
+  - Maintain a global root `tests/conftest.py` for shared system fixtures (e.g., `async_db_session`, `async_client`, event loop management).
+  - Create or extend module-specific `conftest.py` files (e.g., `tests/modules/auth/conftest.py`, `tests/modules/wallet/conftest.py`) for domain fixtures (e.g., `authenticated_client`, `created_user`, `pending_deposit_token`, `expired_deposit_token`).
+  - Fixtures MUST explicitly state their scope (default is `function`) and handle async setup/teardown cleanly using `pytest_asyncio.fixture`.
 
 ---
 
